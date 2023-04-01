@@ -25,3 +25,24 @@ def display_label(image, label, frameid):
 	)
 
 	return image
+
+def display_result(image, conf, frameid, thresh):
+
+    if conf >= thresh:
+        status = "task ending"
+        color = (0, 0, 255)
+    else:
+        status = "task ongoing"
+        color = (255, 0, 0)
+
+    cv2.putText(
+        img = image,
+        text = str(frameid) + " : " + str(conf) + " : " + status,
+        org = (20, 20),
+        fontFace = cv2.FONT_HERSHEY_DUPLEX,
+        fontScale = 0.5,
+        color = color,
+        thickness = 1
+    )
+
+    return image

@@ -7,13 +7,18 @@ import time
 import utils
 from act_dataset import ActDataset, unnormalize_data
 from model import ImageActNet
+from torch.optim import lr_scheduler
+# from torchsummary import summary
 
 def data_loader(data_dir, input_size):
 
-    train_set = ActDataset(data_dir, input_size, train=True)
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=False)
+    train_set = ActDataset(data_dir, input_size, mode="train")
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 
-    return train_loader
+    val_set = ActDataset(data_dir, input_size, mode="val")
+    val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader
 
 def vis_dataloader(dataloader):
 
@@ -37,15 +42,15 @@ def vis_dataloader(dataloader):
 
         cv2.waitKey(-1)
 
-def train(train_loader):
+def train(train_loader, val_loader):
 
     model = ImageActNet()
-    model = model.to(config.DEVICE)
-    summary(model, (3, 224, 224))
+    model = model.to(device)
+    # summary(model, (3, 224, 224))
 
     params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.SGD(params, lr=config.INIT_LR)
-    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[30, 60], gamma=0.1)
+    optimizer = torch.optim.SGD(params, lr=lr)
+    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[20, 40], gamma=0.1)
     regloss = torch.nn.SmoothL1Loss() 
 
     print("[INFO] training the network...", flush=True)
@@ -55,6 +60,7 @@ def train(train_loader):
         tloss_value = 0
         steps = 0
         startTime = time.time()
+        model.train()
 
         for imgs, joints, labels in train_loader:
             
@@ -63,7 +69,7 @@ def train(train_loader):
             joints = joints.to(device)
             labels = labels.to(device)
 
-            out = model(images)
+            out = model(imgs)
             
             loss = regloss(out, labels) 
             loss.backward()
@@ -76,16 +82,41 @@ def train(train_loader):
         time_elapsed = (endTime - startTime) / 60 #mins
         avg_tloss_value = tloss_value / steps
 
-        print("[INFO] EPOCH: {}/{}".format(epoch, config.NUM_EPOCHS), flush=True)
+        print("[INFO] EPOCH: {}/{}".format(epoch, num_epoch), flush=True)
         print("Time: {:.3f} min, Train loss: {:.6f}".format(
 		time_elapsed, avg_tloss_value), flush=True)
         
         scheduler.step()
         
         print("[INFO] saving regression model...", flush=True)
-        model_path = os.path.join(config.MODEL_DIR, str(epoch) + '.pth') 
+        model_path = os.path.join(model_dir, str(epoch) + '.pth') 
         torch.save(model.state_dict(), model_path)
 
+        print("[INFO] validate model...", flush=True)
+        validate(val_loader, model)
+
+def validate(val_loader, model):
+
+    model.eval()
+    tot_loss = 0 
+    steps = 0
+    regloss = torch.nn.SmoothL1Loss() 
+
+    for imgs, joints, labels in val_loader:
+            
+        imgs = imgs.to(device)
+        joints = joints.to(device)
+        labels = labels.to(device)
+
+        out = model(imgs)
+
+        loss = regloss(out, labels)
+        tot_loss += loss.item()
+        steps += 1
+
+    avg_tloss_value = tot_loss / steps
+    print("Val loss: {:.6f}".format(
+		avg_tloss_value), flush=True)    
 
 if __name__ == '__main__':
     
@@ -93,14 +124,17 @@ if __name__ == '__main__':
     input_size = 224
     num_class = 1
     device = "cuda"
-    lr = 1e-1
-    num_epoch = 20
+    lr = 5e-3
+    num_epoch = 60
 
     data_dir = "simple_data/lifting_1/clip_1"
-    model_dir = './models/'
+    model_dir = './models/exp1/'
 
-    train_loader = data_loader(data_dir, input_size)
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+
+    train_loader, val_loader = data_loader(data_dir, input_size)
     
     # vis_dataloader(train_loader)
 
-    train(train_loader)
+    train(train_loader, val_loader)
