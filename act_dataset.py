@@ -99,6 +99,7 @@ class ActDataset(Dataset):
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
+            # self.train_idxs = list(range(len(self.labels)))
             self.sample_data()
 
     def sample_data(self):

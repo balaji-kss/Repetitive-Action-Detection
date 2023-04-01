@@ -128,7 +128,7 @@ if __name__ == '__main__':
     num_epoch = 60
 
     data_dir = "simple_data/lifting_1/clip_1"
-    model_dir = './models/exp1/'
+    model_dir = './models/' + data_dir + ' exp1/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)

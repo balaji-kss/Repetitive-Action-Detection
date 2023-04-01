@@ -49,15 +49,16 @@ def run(dataset, model_path, input_size, device):
 
         out = predict(model, frame, joints, input_size)
         disp_frame = utils.display_result(frame, out, fid, thresh)
-        
+
         cv2.imshow('frame ', disp_frame)
         cv2.waitKey(-1)
 
 if __name__ == "__main__":
 
-    dataset = TestDataset("simple_data/lifting_1/clip_2")
-    model_path = '/home/balaji/Tumeke/models/exp1/60.pth'
+    root_dir = "simple_data/lifting_1/"
+    dataset = TestDataset(root_dir + "clip_3")
+    model_path = '/home/balaji/Tumeke/models/' + root_dir + 'exp1/60.pth'
     input_size = 224
     device = "cuda"
-    thresh = 0.7
+    thresh = 0.6
     run(dataset, model_path, input_size, device)
