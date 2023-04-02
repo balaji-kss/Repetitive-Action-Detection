@@ -1,242 +1,242 @@
-data_dir:  hard_data/kontoor/clip_1/
-model_dir:  ./models/hard_data/kontoor/exp2/
-self.fps  29.97
-end_time_stamps  [364, 749, 1130, 1509, 1943, 2318, 2687, 3079, 3502, 3965]
-mean duration  13.2303
-delta  20
-tot_samples  3627
-pos_samples  180
-neg_samples  3447
+data_dir:  hard_data/folding/clip_1/
+model_dir:  ./models/hard_data/folding/exp3/
+self.fps  16.0
+end_time_stamps  [215, 385, 547, 698, 839, 1025, 1158, 1404, 1560, 1766, 1987]
+mean duration  11.28981818181818
+delta  9
+tot_samples  2000
+pos_samples  99
+neg_samples  1901
 *** after sampling ***
-tot_samples  360
-pos_samples  180
-neg_samples  180
-train_samples  288
-val_samples  72
-train  [762, 1950, 382, 2484, 1788, 1358, 1951, 225, 985, 305]
-val  [3445, 2516, 1880, 841, 3504, 3092, 1878, 1875, 1410, 6]
-self.fps  29.97
-end_time_stamps  [364, 749, 1130, 1509, 1943, 2318, 2687, 3079, 3502, 3965]
-mean duration  13.2303
-delta  20
-tot_samples  3627
-pos_samples  180
-neg_samples  3447
+tot_samples  198
+pos_samples  99
+neg_samples  99
+train_samples  158
+val_samples  40
+train  [1767, 1564, 391, 215, 1567, 1347, 331, 116, 1563, 218]
+val  [846, 892, 97, 1412, 969, 840, 697, 847, 1273, 830]
+self.fps  16.0
+end_time_stamps  [215, 385, 547, 698, 839, 1025, 1158, 1404, 1560, 1766, 1987]
+mean duration  11.28981818181818
+delta  9
+tot_samples  2000
+pos_samples  99
+neg_samples  1901
 *** after sampling ***
-tot_samples  360
-pos_samples  180
-neg_samples  180
-train_samples  288
-val_samples  72
-train  [762, 1950, 382, 2484, 1788, 1358, 1951, 225, 985, 305]
-val  [3445, 2516, 1880, 841, 3504, 3092, 1878, 1875, 1410, 6]
+tot_samples  198
+pos_samples  99
+neg_samples  99
+train_samples  158
+val_samples  40
+train  [1767, 1564, 391, 215, 1567, 1347, 331, 116, 1563, 218]
+val  [846, 892, 97, 1412, 969, 840, 697, 847, 1273, 830]
 [INFO] training the network...
 [INFO] EPOCH: 0/60
-Time: 0.163 min, Train loss: 0.139140
+Time: 0.114 min, Train loss: 0.158634
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.132769
+Val loss: 0.183799
 [INFO] EPOCH: 1/60
-Time: 0.163 min, Train loss: 0.068373
+Time: 0.111 min, Train loss: 0.091073
 [INFO] saving regression model...
 [INFO] EPOCH: 2/60
-Time: 0.162 min, Train loss: 0.047513
+Time: 0.114 min, Train loss: 0.067065
 [INFO] saving regression model...
 [INFO] EPOCH: 3/60
-Time: 0.164 min, Train loss: 0.034123
+Time: 0.112 min, Train loss: 0.054299
 [INFO] saving regression model...
 [INFO] EPOCH: 4/60
-Time: 0.172 min, Train loss: 0.033866
+Time: 0.113 min, Train loss: 0.049443
 [INFO] saving regression model...
 [INFO] EPOCH: 5/60
-Time: 0.174 min, Train loss: 0.025468
+Time: 0.114 min, Train loss: 0.048841
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.162958
+Val loss: 0.123778
 [INFO] EPOCH: 6/60
-Time: 0.169 min, Train loss: 0.020303
+Time: 0.111 min, Train loss: 0.036533
 [INFO] saving regression model...
 [INFO] EPOCH: 7/60
-Time: 0.156 min, Train loss: 0.016003
+Time: 0.117 min, Train loss: 0.030750
 [INFO] saving regression model...
 [INFO] EPOCH: 8/60
-Time: 0.166 min, Train loss: 0.012714
+Time: 0.119 min, Train loss: 0.025558
 [INFO] saving regression model...
 [INFO] EPOCH: 9/60
-Time: 0.165 min, Train loss: 0.011533
+Time: 0.119 min, Train loss: 0.023975
 [INFO] saving regression model...
 [INFO] EPOCH: 10/60
-Time: 0.163 min, Train loss: 0.013181
+Time: 0.118 min, Train loss: 0.020875
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.012428
+Val loss: 0.073904
 [INFO] EPOCH: 11/60
-Time: 0.165 min, Train loss: 0.011543
+Time: 0.114 min, Train loss: 0.023420
 [INFO] saving regression model...
 [INFO] EPOCH: 12/60
-Time: 0.164 min, Train loss: 0.012233
+Time: 0.119 min, Train loss: 0.023800
 [INFO] saving regression model...
 [INFO] EPOCH: 13/60
-Time: 0.164 min, Train loss: 0.012663
+Time: 0.116 min, Train loss: 0.020711
 [INFO] saving regression model...
 [INFO] EPOCH: 14/60
-Time: 0.160 min, Train loss: 0.006168
+Time: 0.115 min, Train loss: 0.020870
 [INFO] saving regression model...
 [INFO] EPOCH: 15/60
-Time: 0.172 min, Train loss: 0.011260
+Time: 0.117 min, Train loss: 0.010318
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.006990
+Val loss: 0.015454
 [INFO] EPOCH: 16/60
-Time: 0.171 min, Train loss: 0.008119
+Time: 0.118 min, Train loss: 0.010287
 [INFO] saving regression model...
 [INFO] EPOCH: 17/60
-Time: 0.168 min, Train loss: 0.003663
+Time: 0.112 min, Train loss: 0.009404
 [INFO] saving regression model...
 [INFO] EPOCH: 18/60
-Time: 0.178 min, Train loss: 0.007421
+Time: 0.117 min, Train loss: 0.012568
 [INFO] saving regression model...
 [INFO] EPOCH: 19/60
-Time: 0.167 min, Train loss: 0.008382
+Time: 0.117 min, Train loss: 0.008617
 [INFO] saving regression model...
 [INFO] EPOCH: 20/60
-Time: 0.168 min, Train loss: 0.007875
+Time: 0.113 min, Train loss: 0.010571
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.001404
+Val loss: 0.004176
 [INFO] EPOCH: 21/60
-Time: 0.158 min, Train loss: 0.005738
+Time: 0.114 min, Train loss: 0.009887
 [INFO] saving regression model...
 [INFO] EPOCH: 22/60
-Time: 0.166 min, Train loss: 0.004310
+Time: 0.111 min, Train loss: 0.007508
 [INFO] saving regression model...
 [INFO] EPOCH: 23/60
-Time: 0.179 min, Train loss: 0.005473
+Time: 0.115 min, Train loss: 0.005522
 [INFO] saving regression model...
 [INFO] EPOCH: 24/60
-Time: 0.170 min, Train loss: 0.003099
+Time: 0.117 min, Train loss: 0.007398
 [INFO] saving regression model...
 [INFO] EPOCH: 25/60
-Time: 0.167 min, Train loss: 0.005865
+Time: 0.113 min, Train loss: 0.006862
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.001091
+Val loss: 0.003229
 [INFO] EPOCH: 26/60
-Time: 0.164 min, Train loss: 0.005735
+Time: 0.110 min, Train loss: 0.004204
 [INFO] saving regression model...
 [INFO] EPOCH: 27/60
-Time: 0.160 min, Train loss: 0.005763
+Time: 0.113 min, Train loss: 0.005604
 [INFO] saving regression model...
 [INFO] EPOCH: 28/60
-Time: 0.156 min, Train loss: 0.003210
+Time: 0.109 min, Train loss: 0.008871
 [INFO] saving regression model...
 [INFO] EPOCH: 29/60
-Time: 0.161 min, Train loss: 0.006010
+Time: 0.116 min, Train loss: 0.005582
 [INFO] saving regression model...
 [INFO] EPOCH: 30/60
-Time: 0.164 min, Train loss: 0.003268
+Time: 0.114 min, Train loss: 0.009735
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000950
+Val loss: 0.002306
 [INFO] EPOCH: 31/60
-Time: 0.173 min, Train loss: 0.003637
+Time: 0.114 min, Train loss: 0.004330
 [INFO] saving regression model...
 [INFO] EPOCH: 32/60
-Time: 0.179 min, Train loss: 0.004261
+Time: 0.112 min, Train loss: 0.003484
 [INFO] saving regression model...
 [INFO] EPOCH: 33/60
-Time: 0.170 min, Train loss: 0.006422
+Time: 0.108 min, Train loss: 0.010491
 [INFO] saving regression model...
 [INFO] EPOCH: 34/60
-Time: 0.161 min, Train loss: 0.006266
+Time: 0.116 min, Train loss: 0.004166
 [INFO] saving regression model...
 [INFO] EPOCH: 35/60
-Time: 0.163 min, Train loss: 0.002780
+Time: 0.116 min, Train loss: 0.009590
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000764
+Val loss: 0.001742
 [INFO] EPOCH: 36/60
-Time: 0.171 min, Train loss: 0.003411
+Time: 0.112 min, Train loss: 0.006693
 [INFO] saving regression model...
 [INFO] EPOCH: 37/60
-Time: 0.172 min, Train loss: 0.004830
+Time: 0.116 min, Train loss: 0.005968
 [INFO] saving regression model...
 [INFO] EPOCH: 38/60
-Time: 0.159 min, Train loss: 0.006147
+Time: 0.115 min, Train loss: 0.003087
 [INFO] saving regression model...
 [INFO] EPOCH: 39/60
-Time: 0.161 min, Train loss: 0.004034
+Time: 0.117 min, Train loss: 0.008053
 [INFO] saving regression model...
 [INFO] EPOCH: 40/60
-Time: 0.178 min, Train loss: 0.005801
+Time: 0.116 min, Train loss: 0.003867
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000678
+Val loss: 0.001415
 [INFO] EPOCH: 41/60
-Time: 0.159 min, Train loss: 0.008144
+Time: 0.113 min, Train loss: 0.002364
 [INFO] saving regression model...
 [INFO] EPOCH: 42/60
-Time: 0.159 min, Train loss: 0.004300
+Time: 0.114 min, Train loss: 0.003114
 [INFO] saving regression model...
 [INFO] EPOCH: 43/60
-Time: 0.165 min, Train loss: 0.005823
+Time: 0.115 min, Train loss: 0.010172
 [INFO] saving regression model...
 [INFO] EPOCH: 44/60
-Time: 0.161 min, Train loss: 0.009402
+Time: 0.112 min, Train loss: 0.003689
 [INFO] saving regression model...
 [INFO] EPOCH: 45/60
-Time: 0.159 min, Train loss: 0.003394
+Time: 0.113 min, Train loss: 0.003604
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000643
+Val loss: 0.001386
 [INFO] EPOCH: 46/60
-Time: 0.160 min, Train loss: 0.005690
+Time: 0.116 min, Train loss: 0.003538
 [INFO] saving regression model...
 [INFO] EPOCH: 47/60
-Time: 0.161 min, Train loss: 0.003542
+Time: 0.114 min, Train loss: 0.004990
 [INFO] saving regression model...
 [INFO] EPOCH: 48/60
-Time: 0.160 min, Train loss: 0.004246
+Time: 0.110 min, Train loss: 0.003611
 [INFO] saving regression model...
 [INFO] EPOCH: 49/60
-Time: 0.165 min, Train loss: 0.005821
+Time: 0.112 min, Train loss: 0.004850
 [INFO] saving regression model...
 [INFO] EPOCH: 50/60
-Time: 0.165 min, Train loss: 0.002532
+Time: 0.119 min, Train loss: 0.005777
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000651
+Val loss: 0.001270
 [INFO] EPOCH: 51/60
-Time: 0.163 min, Train loss: 0.006955
+Time: 0.114 min, Train loss: 0.002523
 [INFO] saving regression model...
 [INFO] EPOCH: 52/60
-Time: 0.162 min, Train loss: 0.003396
+Time: 0.111 min, Train loss: 0.006159
 [INFO] saving regression model...
 [INFO] EPOCH: 53/60
-Time: 0.161 min, Train loss: 0.003059
+Time: 0.114 min, Train loss: 0.005013
 [INFO] saving regression model...
 [INFO] EPOCH: 54/60
-Time: 0.158 min, Train loss: 0.003178
+Time: 0.109 min, Train loss: 0.004230
 [INFO] saving regression model...
 [INFO] EPOCH: 55/60
-Time: 0.159 min, Train loss: 0.003339
+Time: 0.117 min, Train loss: 0.002277
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000579
+Val loss: 0.001206
 [INFO] EPOCH: 56/60
-Time: 0.160 min, Train loss: 0.003042
+Time: 0.118 min, Train loss: 0.004070
 [INFO] saving regression model...
 [INFO] EPOCH: 57/60
-Time: 0.160 min, Train loss: 0.003944
+Time: 0.117 min, Train loss: 0.004386
 [INFO] saving regression model...
 [INFO] EPOCH: 58/60
-Time: 0.161 min, Train loss: 0.003700
+Time: 0.113 min, Train loss: 0.006703
 [INFO] saving regression model...
 [INFO] EPOCH: 59/60
-Time: 0.163 min, Train loss: 0.005245
+Time: 0.110 min, Train loss: 0.002839
 [INFO] saving regression model...
 [INFO] EPOCH: 60/60
-Time: 0.158 min, Train loss: 0.003456
+Time: 0.113 min, Train loss: 0.004247
 [INFO] saving regression model...
 [INFO] validate model...
-Val loss: 0.000554
+Val loss: 0.001120

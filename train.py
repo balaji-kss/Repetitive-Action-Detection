@@ -6,7 +6,7 @@ import torch.nn as nn
 import time
 import utils
 from act_dataset import ActDataset, unnormalize_data
-from model import ImageActNet
+from model import ImageActNet, ImagePoseActNet
 from torch.optim import lr_scheduler
 # from torchsummary import summary
 
@@ -44,7 +44,8 @@ def vis_dataloader(dataloader):
 
 def train(train_loader, val_loader):
 
-    model = ImageActNet(inp_channels = inp_channels)
+    # model = ImageActNet(inp_channels = inp_channels)
+    model = ImagePoseActNet(inp_channels = inp_channels)
     model = model.to(device)
     # summary(model, (3, 224, 224))
 
@@ -69,7 +70,7 @@ def train(train_loader, val_loader):
             joints = joints.to(device)
             labels = labels.to(device)
 
-            out = model(imgs)
+            out = model(imgs, joints)
             
             loss = regloss(out, labels) 
             loss.backward()
@@ -109,7 +110,7 @@ def validate(val_loader, model):
         joints = joints.to(device)
         labels = labels.to(device)
 
-        out = model(imgs)
+        out = model(imgs, joints)
 
         loss = regloss(out, labels)
         tot_loss += loss.item()
@@ -125,15 +126,15 @@ if __name__ == '__main__':
     input_size = 224
     num_class = 1
     device = "cuda"
-    lr = 1e-3
+    lr = 1e-2
     num_epoch = 60
     num_ts = 3
     tstride = 3
     inp_channels = 3 * num_ts
 
-    root_dir = "hard_data/kontoor/"
+    root_dir = "hard_data/folding/"
     data_dir = root_dir + 'clip_1/'
-    model_dir = './models/' + root_dir + 'exp2/'
+    model_dir = './models/' + root_dir + 'exp3/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)

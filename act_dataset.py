@@ -26,7 +26,11 @@ def preprocess_data(image, joints, input_res):
     norm_img = np.copy(image)
 
     norm_img = square_img(norm_img)
-    norm_joints = normalize_joints(norm_img, joints)
+
+    norm_joints_lst = []
+    for i in range(len(joints)):
+        norm_joints = normalize_joints(norm_img, joints[i])
+        norm_joints_lst.append(norm_joints)
 
     h, w, c = norm_img.shape
 
@@ -36,7 +40,7 @@ def preprocess_data(image, joints, input_res):
     norm_img = cv2.resize(norm_img, (input_res, input_res)).astype(np.float32)
     norm_img /= 255.0
     
-    return norm_img, norm_joints
+    return norm_img, norm_joints_lst
 
 def normalize_joints(img, joints):    
 
@@ -65,30 +69,35 @@ def vis_dataset(dataset):
         
         img, joints, label = dataset[frameid]
         img, joints, label = img.numpy(), joints.numpy(), label.numpy()
-        img = np.transpose(img, (1, 2, 0))
+        h, w = img.shape[1:]
+        img = img.reshape(3, 3, h, w)
+        imgs = np.transpose(img, (0, 2, 3, 1))
+        num_imgs = imgs.shape[0]
 
-        h, w, c = img.shape
-        for i in range(c//3):
-            img[:, :, i * 3 : (i + 1) * 3] = cv2.cvtColor(img[:, :, i * 3 : (i + 1) * 3], cv2.COLOR_BGR2RGB)
+        stack_img = None
+        for i in range(num_imgs):
+            img = imgs[i].copy()
+            jts = joints[i].reshape(15, 2)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img, jts = unnormalize_data(img, jts)
+            disp_img = utils.display_skeleton(img, jts)
 
-        if c == 9:
-            cimg = img[:, :, 3:6].copy()
-            stack_img = np.hstack((img[:,:,6:], img[:,:,3:6]))
-            stack_img = np.hstack((stack_img, img[:,:,:3]))
-        else:
-            cimg = img
-    
-        cimg, joints = unnormalize_data(cimg, joints)
+            if stack_img is None:
+                stack_img = disp_img 
+            else:
+                stack_img = np.hstack((disp_img, stack_img))
 
-        disp_img = utils.display_skeleton(cimg, joints)
-        disp_img = utils.display_label(disp_img, int(label), frameid)
-
-        if c == 9:
-            cv2.imshow("stack image", stack_img)
-
-        cv2.imshow("Test", disp_img)
+        cv2.imshow("stack_img", stack_img)
         cv2.waitKey(-1)
 
+def reshape_joints(joints_lst):
+
+    if len(joints_lst) == 1:
+        return joints_lst[0]
+    if len(joints_lst) == 3:
+        jtrl = [jt.reshape(30) for jt in joints_lst]
+        return np.array(jtrl)
+        
 class ActDataset(Dataset):
     """Class to load in pose data.
     Args:
@@ -222,18 +231,20 @@ class ActDataset(Dataset):
 
         return np.array(data)
 
-    def stack_temp_images(self, index):
+    def stack_temp_data(self, index):
         
         if self.num_ts == 1:
             img_path = os.path.join(self.image_dir, str(index) + '.jpg')
             img = cv2.imread(img_path)
-            return img
+            joints = self.joints_2d[index]
+            return img, [joints]
 
         if self.num_ts == 3:
 
             tids = [index - self.tstride, index, index + self.tstride]
             stack_img = None
-            
+            temp_joints = []
+
             for i in range(self.num_ts):
                 tids[i] = min(max(0, tids[i]), self.num_frames - 1)
                 img_path = os.path.join(self.image_dir, str(tids[i]) + '.jpg')
@@ -244,7 +255,12 @@ class ActDataset(Dataset):
                 else:
                     stack_img = np.concatenate((img, stack_img), axis=2)
 
-            return stack_img
+                joints = self.joints_2d[tids[i]]
+                temp_joints.append(joints)
+            
+            temp_joints.reverse()
+
+            return stack_img, temp_joints 
 
     def __len__(self):
         """Get the size of the dataset."""
@@ -262,12 +278,12 @@ class ActDataset(Dataset):
         if self.mode == "val":
             index = self.val_idxs[idx]
 
-        img = self.stack_temp_images(index)
-        joints = self.joints_2d[index]
+        img, joints_lst = self.stack_temp_data(index)
         label = self.labels[index]
 
-        pre_img, pre_joints = preprocess_data(img, joints, self.input_res)
-
+        pre_img, pre_joints_lst = preprocess_data(img, joints_lst, self.input_res)
+        pre_joints = reshape_joints(pre_joints_lst)
+        pre_joints = np.transpose(pre_joints, (1, 0))
         input_img = transforms.ToTensor()(pre_img)        
         pre_joints = torch.as_tensor(pre_joints, dtype=torch.float32)
         label = torch.as_tensor([label], dtype=torch.float32)
