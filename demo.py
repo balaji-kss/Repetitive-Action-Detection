@@ -74,6 +74,15 @@ def stack_data(dataset, fid):
 
         return stack_img, stack_img[:, :, 3:6].copy(), temp_joints
 
+def get_mov_avg(smooth_window, len_sw, cur_pred):
+
+    smooth_window.append(cur_pred)
+    if len(smooth_window) > len_sw:
+        smooth_window.pop(0)
+    
+    avg = np.sum(smooth_window) / len(smooth_window)
+
+    return round(avg, 3), smooth_window
 
 def run(dataset, model_path, input_size, device):
 
@@ -83,7 +92,7 @@ def run(dataset, model_path, input_size, device):
         print('save video path: ', out_video_path)
         out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (720, 480))
 
-    len_sw = []
+    smooth_win = []
     for fid in range(len(dataset)):
 
         # if fid < 1560:continue
@@ -91,7 +100,10 @@ def run(dataset, model_path, input_size, device):
         input_, disp_frame, joints = stack_data(dataset, fid)
 
         pred = predict(model, input_, joints, input_size)
-        disp_frame = utils.display_result(disp_frame, pred, fid, thresh)
+        
+        prev_avg, smooth_win = get_mov_avg(smooth_win, len_sw, pred)
+        print('smooth_win ', smooth_win)
+        disp_frame = utils.display_result(disp_frame, pred, prev_avg, fid, thresh)
 
         if write_video:
             out.write(disp_frame)
@@ -102,10 +114,10 @@ def run(dataset, model_path, input_size, device):
 if __name__ == "__main__":
 
     # root_dir = "simple_data/lifting_3/"
-    root_dir = "hard_data/folding/"
-    inp_video_dir = root_dir + "clip_2/"
+    root_dir = "hard_data/kontoor/"
+    inp_video_dir = root_dir + "clip_1/"
     exp = 'exp3_4'
-    model_path = './models/' + root_dir + '/' + exp + '/55.pth'
+    model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
     out_video_path = out_video_dir + 'res.mp4'
 
@@ -126,6 +138,6 @@ if __name__ == "__main__":
     
     dataset = TestDataset(inp_video_dir)
 
-    len_sw = dataset.video.fps // 2 # 0.5 sec smoothing
+    len_sw = dataset.video.fps // 3 # 0.5 sec smoothing
 
     run(dataset, model_path, input_size, device)

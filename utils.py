@@ -44,9 +44,9 @@ def extract_frames(video_path, save_dir):
 
         i += 1
 
-def display_result(image, conf, frameid, thresh):
+def display_result(image, conf, sm_conf, frameid, thresh):
 
-    if conf >= thresh:
+    if sm_conf >= thresh:
         status = "task ending"
         color = (0, 0, 255)
     else:
@@ -55,7 +55,7 @@ def display_result(image, conf, frameid, thresh):
 
     cv2.putText(
         img = image,
-        text = str(frameid) + " : " + str(conf) + " : " + status,
+        text = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status,
         org = (20, 20),
         fontFace = cv2.FONT_HERSHEY_DUPLEX,
         fontScale = 0.5,

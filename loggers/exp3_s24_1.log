@@ -1,0 +1,53 @@
+lr  0.01
+data_dir:  simple_data/lifting_2/clip_1/
+model_dir:  ./models/simple_data/lifting_2/exp3_4_1/
+self.fps  16.0
+end_time_stamps  [345, 709, 1072, 1496, 1921, 2370, 2728, 3146, 3625, 4037, 4510, 4897, 5311]
+mean duration  25.53192307692308
+delta  20
+tot_samples  5480
+pos_samples  260
+neg_samples  5220
+*** after sampling ***
+neg_stride  10
+tot_samples  782
+pos_samples  260
+neg_samples  522
+train_samples  742
+val_samples  40
+train  [4290, 4044, 1760, 2731, 2732, 2738, 4000, 1000, 2550, 1750]
+val  [1490, 3910, 4950, 2700, 4430, 5315, 850, 650, 1925, 300]
+self.fps  16.0
+end_time_stamps  [345, 709, 1072, 1496, 1921, 2370, 2728, 3146, 3625, 4037, 4510, 4897, 5311]
+mean duration  25.53192307692308
+delta  20
+tot_samples  5480
+pos_samples  260
+neg_samples  5220
+*** after sampling ***
+neg_stride  10
+tot_samples  782
+pos_samples  260
+neg_samples  522
+train_samples  742
+val_samples  40
+train  [4290, 4044, 1760, 2731, 2732, 2738, 4000, 1000, 2550, 1750]
+val  [1490, 3910, 4950, 2700, 4430, 5315, 850, 650, 1925, 300]
+[INFO] training the network...
+[INFO] EPOCH: 0/30
+Time: 0.884 min, Train loss: 1.317708
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.502604
+[INFO] EPOCH: 1/30
+Time: 0.888 min, Train loss: 1.295139
+[INFO] saving regression model...
+[INFO] EPOCH: 2/30
+Time: 0.955 min, Train loss: 1.272569
+[INFO] saving regression model...
+[INFO] EPOCH: 3/30
+Time: 0.966 min, Train loss: 1.317708
+[INFO] saving regression model...
+[INFO] EPOCH: 4/30
+Time: 0.979 min, Train loss: 1.317708
+[INFO] saving regression model...

@@ -51,7 +51,7 @@ def train(train_loader, val_loader):
 
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.SGD(params, lr=lr)
-    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[20, 40], gamma=0.1)
+    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[10, 20], gamma=0.1)
     # regloss = torch.nn.SmoothL1Loss() 
     regloss = torch.nn.MSELoss() 
 
@@ -94,7 +94,7 @@ def train(train_loader, val_loader):
         model_path = os.path.join(model_dir, str(epoch) + '.pth') 
         torch.save(model.state_dict(), model_path)
 
-        if epoch % 5 == 0:
+        if epoch % 10 == 0:
             print("[INFO] validate model...", flush=True)
             validate(val_loader, model)
 
@@ -128,12 +128,13 @@ if __name__ == '__main__':
     num_class = 1
     device = "cuda"
     lr = 1e-2
-    num_epoch = 60
+    num_epoch = 30
     num_ts = 3
     tstride = 3
     inp_channels = 3 * num_ts
 
-    root_dir = "hard_data/folding/"
+    # root_dir = "hard_data/kontoor/"
+    root_dir = "simple_data/lifting_2/"
     data_dir = root_dir + 'clip_1/'
     model_dir = './models/' + root_dir + 'exp3_4/'
 
