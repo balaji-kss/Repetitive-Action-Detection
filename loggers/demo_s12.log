@@ -1,0 +1,4 @@
+inp_video_dir   simple_data/lifting_1/clip_2/
+out_video_path   simple_data/lifting_1/clip_2/exp3_4/lifting_1_clip_2.mp4
+save_lst_path   simple_data/lifting_1/clip_2/exp3_4/lifting_1_clip_2.txt
+model_path  ./models/simple_data/lifting_1//exp3_4/40.pth

@@ -89,7 +89,7 @@ def run(dataset, model_path, input_size, device):
     model = load_net(model_path, device)
 
     if write_video:
-        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (360, 640))
+        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (270, 480))
 
     frame_confs = []
     smooth_win = []
@@ -127,8 +127,8 @@ def write_lst(lst_path, frame_confs):
 if __name__ == "__main__":
 
     clip = "clip_2"
-    root_dir = "simple_data/lifting_3/"
-    # root_dir = "hard_data/folding/"
+    # root_dir = "simple_data/lifting_1/"
+    root_dir = "hard_data/kontoor/"
     inp_video_dir = root_dir + clip + "/"
     exp = 'exp3_4'
     model_path = './models/' + root_dir + '/' + exp + '/60.pth'
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     print('inp_video_dir  ', inp_video_dir)
     print('out_video_path  ', out_video_path)
     print('save_lst_path  ', save_lst_path)
-    print('model_path ', model_path)
+    print('model_path ', model_path, flush=True)
 
     input_size = 224
     device = "cuda"

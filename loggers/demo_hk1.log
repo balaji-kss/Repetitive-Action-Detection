@@ -1,0 +1,4 @@
+inp_video_dir   hard_data/kontoor/clip_1/
+out_video_path   hard_data/kontoor/clip_1/exp3_4/kontoor_clip_1.mp4
+save_lst_path   hard_data/kontoor/clip_1/exp3_4/kontoor_clip_1.txt
+model_path  ./models/hard_data/kontoor//exp3_4/60.pth
