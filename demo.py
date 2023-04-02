@@ -88,10 +88,11 @@ def run(dataset, model_path, input_size, device):
 
 if __name__ == "__main__":
 
-    root_dir = "simple_data/lifting_1/"
+    # root_dir = "simple_data/lifting_1/"
+    root_dir = "hard_data/folding/"
     inp_video_dir = root_dir + "clip_2/"
     exp = 'exp2'
-    model_path = './models/' + root_dir + '/' + exp + '/38.pth'
+    model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
     out_video_path = out_video_dir + 'res.mp4'
 
@@ -104,10 +105,10 @@ if __name__ == "__main__":
 
     input_size = 224
     device = "cuda"
-    thresh = 0.8
+    thresh = 0.6
     num_ts = 3
     tstride = 3
-    write_video = 1
+    write_video = 0
 
     dataset = TestDataset(inp_video_dir)
     run(dataset, model_path, input_size, device)

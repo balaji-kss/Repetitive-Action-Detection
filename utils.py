@@ -67,10 +67,13 @@ def display_result(image, conf, frameid, thresh):
 
 if __name__ == "__main__":
 
-    video_path = '/home/balaji/Tumeke/simple_data/lifting_1/clip_1/video.mp4'
-    save_dir = '/home/balaji/Tumeke/simple_data/lifting_1/clip_1/images/'
+    video_path = '/home/balaji/Tumeke/hard_data/kontoor/clip_1/video.mp4'
+    save_dir = '/home/balaji/Tumeke/hard_data/kontoor/clip_1/images/'
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-        
-    extract_frames(video_path)
+    
+    print('video_path ', video_path)
+    print('save_dir ', save_dir)
+
+    extract_frames(video_path, save_dir)

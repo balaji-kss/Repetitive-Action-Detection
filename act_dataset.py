@@ -103,21 +103,24 @@ class ActDataset(Dataset):
         self.num_ts = num_ts
         self.tstride = tstride
 
+        self.video_file = f"{data_prefix}/video.mp4"
         self.image_dir = f"{data_prefix}/images/"
         self.joints_2d_file = f"{data_prefix}/2d.csv"
         self.ground_truth_file = f"{data_prefix}/gt.csv"
-        
+        self.video = mmcv.VideoReader(self.video_file)
+
         self.joints_2d = self.load_joint_data_2d()
 
         self.num_frames = len(self.joints_2d)
         self.neg_val = 0
         self.pos_val = 1
-        self.fps = 16
+        self.fps = self.video.fps
+        print('self.fps ', self.fps)
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
-            self.train_idxs = list(range(len(self.labels)))
-            # self.sample_data()
+            # self.train_idxs = list(range(len(self.labels)))
+            self.sample_data()
 
     def sample_data(self):
         
@@ -187,7 +190,6 @@ class ActDataset(Dataset):
         end_time_stamps, durations = [], []
 
         for row in reader:
-            
             duration = float(row[0])
             prev_ts =  duration * self.fps + prev_ts
             durations.append(duration)
@@ -323,5 +325,6 @@ class TestDataset(Dataset):
 if __name__ == "__main__":
 	
     input_res = 360
-    dataset = ActDataset("simple_data/lifting_1/clip_1", input_res, mode="train", num_ts = 3, tstride = 3)
+    inp_dir = "hard_data/folding/clip_1"
+    dataset = ActDataset(inp_dir, input_res, mode="train", num_ts = 3, tstride = 3)
     vis_dataset(dataset)

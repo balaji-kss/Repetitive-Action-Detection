@@ -1,0 +1,124 @@
+data_dir:  simple_data/lifting_3/clip_1/
+model_dir:  ./models/simple_data/lifting_3/exp2/
+end_time_stamps  [377, 749, 1099, 1399, 1532, 1892, 2231, 2631, 2934, 3317, 3625, 4077, 4480, 4787, 4951, 5355, 5732, 6052, 6376, 6719, 7048, 7386, 7722, 7934, 8144, 8344, 8523, 8723, 8953, 9262, 9673, 10949, 11263, 11640, 12068, 12493, 12807, 13174, 13561, 14063, 14462, 14844, 15258]
+mean duration  22.177023255813953
+delta  18
+tot_samples  15264
+pos_samples  762
+neg_samples  14502
+*** after sampling ***
+tot_samples  1524
+pos_samples  762
+neg_samples  762
+train_samples  1219
+val_samples  305
+train  [4480, 12068, 15246, 13337, 8152, 1763, 3971, 389, 4790, 3334]
+val  [10240, 15209, 4481, 6666, 10829, 2246, 7754, 12082, 12915, 11650]
+end_time_stamps  [377, 749, 1099, 1399, 1532, 1892, 2231, 2631, 2934, 3317, 3625, 4077, 4480, 4787, 4951, 5355, 5732, 6052, 6376, 6719, 7048, 7386, 7722, 7934, 8144, 8344, 8523, 8723, 8953, 9262, 9673, 10949, 11263, 11640, 12068, 12493, 12807, 13174, 13561, 14063, 14462, 14844, 15258]
+mean duration  22.177023255813953
+delta  18
+tot_samples  15264
+pos_samples  762
+neg_samples  14502
+*** after sampling ***
+tot_samples  1524
+pos_samples  762
+neg_samples  762
+train_samples  1219
+val_samples  305
+train  [4480, 12068, 15246, 13337, 8152, 1763, 3971, 389, 4790, 3334]
+val  [10240, 15209, 4481, 6666, 10829, 2246, 7754, 12082, 12915, 11650]
+[INFO] training the network...
+[INFO] EPOCH: 0/60
+Time: 1.057 min, Train loss: 0.086755
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.330111
+[INFO] EPOCH: 1/60
+Time: 1.092 min, Train loss: 0.044752
+[INFO] saving regression model...
+[INFO] EPOCH: 2/60
+Time: 1.101 min, Train loss: 0.034632
+[INFO] saving regression model...
+[INFO] EPOCH: 3/60
+Time: 1.064 min, Train loss: 0.024772
+[INFO] saving regression model...
+[INFO] EPOCH: 4/60
+Time: 1.049 min, Train loss: 0.022864
+[INFO] saving regression model...
+[INFO] EPOCH: 5/60
+Time: 1.052 min, Train loss: 0.017009
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.017517
+[INFO] EPOCH: 6/60
+Time: 1.110 min, Train loss: 0.016893
+[INFO] saving regression model...
+[INFO] EPOCH: 7/60
+Time: 1.120 min, Train loss: 0.016899
+[INFO] saving regression model...
+[INFO] EPOCH: 8/60
+Time: 1.109 min, Train loss: 0.015443
+[INFO] saving regression model...
+[INFO] EPOCH: 9/60
+Time: 1.127 min, Train loss: 0.015506
+[INFO] saving regression model...
+[INFO] EPOCH: 10/60
+Time: 1.098 min, Train loss: 0.013037
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.022614
+[INFO] EPOCH: 11/60
+Time: 1.093 min, Train loss: 0.013636
+[INFO] saving regression model...
+[INFO] EPOCH: 12/60
+Time: 1.128 min, Train loss: 0.012635
+[INFO] saving regression model...
+[INFO] EPOCH: 13/60
+Time: 1.115 min, Train loss: 0.012442
+[INFO] saving regression model...
+[INFO] EPOCH: 14/60
+Time: 1.052 min, Train loss: 0.010161
+[INFO] saving regression model...
+[INFO] EPOCH: 15/60
+Time: 0.913 min, Train loss: 0.010721
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.019747
+[INFO] EPOCH: 16/60
+Time: 1.000 min, Train loss: 0.011384
+[INFO] saving regression model...
+[INFO] EPOCH: 17/60
+Time: 0.965 min, Train loss: 0.012372
+[INFO] saving regression model...
+[INFO] EPOCH: 18/60
+Time: 0.913 min, Train loss: 0.008595
+[INFO] saving regression model...
+[INFO] EPOCH: 19/60
+Time: 0.916 min, Train loss: 0.009569
+[INFO] saving regression model...
+[INFO] EPOCH: 20/60
+Time: 0.961 min, Train loss: 0.010326
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.004221
+[INFO] EPOCH: 21/60
+Time: 1.088 min, Train loss: 0.007550
+[INFO] saving regression model...
+[INFO] EPOCH: 22/60
+Time: 1.107 min, Train loss: 0.007045
+[INFO] saving regression model...
+[INFO] EPOCH: 23/60
+Time: 1.109 min, Train loss: 0.006833
+[INFO] saving regression model...
+[INFO] EPOCH: 24/60
+Time: 1.083 min, Train loss: 0.007755
+[INFO] saving regression model...
+[INFO] EPOCH: 25/60
+Time: 1.102 min, Train loss: 0.009176
+[INFO] saving regression model...
+[INFO] validate model...
+Val loss: 0.008294
+[INFO] EPOCH: 26/60
+Time: 1.114 min, Train loss: 0.010066
+[INFO] saving regression model...
