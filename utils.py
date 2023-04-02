@@ -47,15 +47,18 @@ def extract_frames(video_path, save_dir):
 def display_result(image, conf, sm_conf, frameid, thresh):
 
     if sm_conf >= thresh:
-        status = "task ending"
+        status = "task ended"
         color = (0, 0, 255)
     else:
-        status = "task ongoing"
+        status = "task not ended"
         color = (255, 0, 0)
+
+    # text_ = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status
+    text_ = str(frameid) + " : " + status
 
     cv2.putText(
         img = image,
-        text = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status,
+        text = text_,
         org = (20, 20),
         fontFace = cv2.FONT_HERSHEY_DUPLEX,
         fontScale = 0.5,

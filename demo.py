@@ -89,9 +89,9 @@ def run(dataset, model_path, input_size, device):
     model = load_net(model_path, device)
 
     if write_video:
-        print('save video path: ', out_video_path)
-        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (720, 480))
+        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (360, 640))
 
+    frame_confs = []
     smooth_win = []
     for fid in range(len(dataset)):
 
@@ -102,7 +102,10 @@ def run(dataset, model_path, input_size, device):
         pred = predict(model, input_, joints, input_size)
         
         prev_avg, smooth_win = get_mov_avg(smooth_win, len_sw, pred)
-        print('smooth_win ', smooth_win)
+
+        # print('smooth_win ', smooth_win)
+        frame_confs.append(prev_avg)
+
         disp_frame = utils.display_result(disp_frame, pred, prev_avg, fid, thresh)
 
         if write_video:
@@ -111,21 +114,35 @@ def run(dataset, model_path, input_size, device):
             cv2.imshow('frame ', disp_frame)
             cv2.waitKey(-1)
 
+    if write_video:
+        write_lst(save_lst_path, frame_confs)
+
+def write_lst(lst_path, frame_confs):
+    
+    with open(lst_path, 'w+') as f:    
+        f.write(','.join(str(j) for j in frame_confs))
+        f.write('\n')
+        f.flush()
+
 if __name__ == "__main__":
 
-    # root_dir = "simple_data/lifting_3/"
-    root_dir = "hard_data/kontoor/"
-    inp_video_dir = root_dir + "clip_1/"
+    clip = "clip_2"
+    root_dir = "simple_data/lifting_3/"
+    # root_dir = "hard_data/folding/"
+    inp_video_dir = root_dir + clip + "/"
     exp = 'exp3_4'
     model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
-    out_video_path = out_video_dir + 'res.mp4'
+    act_name = root_dir.rsplit('/')[1] + '_'
+    out_video_path = out_video_dir + act_name + clip + '.mp4'
+    save_lst_path = out_video_dir + act_name + clip + '.txt'
 
     if not os.path.exists(out_video_dir):
         os.makedirs(out_video_dir)
         
     print('inp_video_dir  ', inp_video_dir)
     print('out_video_path  ', out_video_path)
+    print('save_lst_path  ', save_lst_path)
     print('model_path ', model_path)
 
     input_size = 224
@@ -133,7 +150,7 @@ if __name__ == "__main__":
     thresh = 0.5
     num_ts = 3
     tstride = 3
-    write_video = 0
+    write_video = 1
     pos_val = 3
     
     dataset = TestDataset(inp_video_dir)
