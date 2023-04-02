@@ -13,6 +13,7 @@ import os
 def load_net(model_path, device):
 
     model = ImagePoseActNet(inp_channels=3*num_ts)
+    # model = ImageActNet(inp_channels=3*num_ts)
     model.load_state_dict(torch.load(model_path))
     model = model.to(device)
     model.eval()
@@ -22,9 +23,8 @@ def load_net(model_path, device):
 def load_data(image, joints, input_size):
 
     pre_img, pre_joints = act_dataset.preprocess_data(image, joints, input_size)
-    pre_joints = act_dataset.reshape_joints(pre_joints)
-    print('pre_img, pre_joints ', pre_img.shape, pre_joints.shape)
-    pre_joints = np.transpose(pre_joints, (1, 0))
+    pre_joints = act_dataset.reshape_joints(pre_joints) #(224, 224, 9) (3, 30)
+    pre_joints = np.transpose(pre_joints, (1, 0)) #(30, 3)
     pre_joints = torch.as_tensor(pre_joints, dtype=torch.float32)
 
     pre_img = transforms.ToTensor()(pre_img)
@@ -39,6 +39,7 @@ def predict(model, image, joints, input_size):
     pre_img = pre_img.to(device)
     pre_joints = pre_joints.to(device)
     out = model(pre_img, pre_joints)
+    # out = model(pre_img)
     out = out[0].detach().cpu().numpy()
     out = min(max(0, out), 1)
     out = round(float(out), 3)
@@ -84,6 +85,8 @@ def run(dataset, model_path, input_size, device):
 
     for fid in range(len(dataset)):
 
+        # if fid < 1560:continue
+
         input_, disp_frame, joints = stack_data(dataset, fid)
 
         pred = predict(model, input_, joints, input_size)
@@ -97,10 +100,10 @@ def run(dataset, model_path, input_size, device):
 
 if __name__ == "__main__":
 
-    # root_dir = "simple_data/lifting_1/"
-    root_dir = "hard_data/folding/"
+    root_dir = "simple_data/lifting_3/"
+    # root_dir = "hard_data/folding/"
     inp_video_dir = root_dir + "clip_2/"
-    exp = 'exp3'
+    exp = 'exp2'
     model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
     out_video_path = out_video_dir + 'res.mp4'

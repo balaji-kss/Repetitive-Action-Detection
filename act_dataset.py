@@ -68,7 +68,8 @@ def vis_dataset(dataset):
     for frameid in range(len(dataset)):
         
         img, joints, label = dataset[frameid]
-        img, joints, label = img.numpy(), joints.numpy(), label.numpy()
+        img, joints, label = img.numpy(), joints.numpy(), label.numpy() # (9, 360, 360), (3, 30)
+        
         h, w = img.shape[1:]
         img = img.reshape(3, 3, h, w)
         imgs = np.transpose(img, (0, 2, 3, 1))
@@ -87,6 +88,7 @@ def vis_dataset(dataset):
             else:
                 stack_img = np.hstack((disp_img, stack_img))
 
+        stack_img = utils.display_label(stack_img, int(label), frameid)
         cv2.imshow("stack_img", stack_img)
         cv2.waitKey(-1)
 
@@ -94,6 +96,7 @@ def reshape_joints(joints_lst):
 
     if len(joints_lst) == 1:
         return joints_lst[0]
+
     if len(joints_lst) == 3:
         jtrl = [jt.reshape(30) for jt in joints_lst]
         return np.array(jtrl)
@@ -123,13 +126,14 @@ class ActDataset(Dataset):
         self.num_frames = len(self.joints_2d)
         self.neg_val = 0
         self.pos_val = 1
+        self.neg_ratio = 3
         self.fps = self.video.fps
         print('self.fps ', self.fps)
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
-            # self.train_idxs = list(range(len(self.labels)))
-            self.sample_data()
+            self.train_idxs = list(range(len(self.labels)))
+            # self.sample_data()
 
     def sample_data(self):
         
@@ -148,8 +152,9 @@ class ActDataset(Dataset):
             random.shuffle(neg_idxs)
 
         min_len = min(len(pos_idxs), len(neg_idxs))
-        pos_idxs = pos_idxs[:min_len]
-        neg_idxs = neg_idxs[:min_len]
+        neg_len = int(self.neg_ratio * min_len)
+        pos_idxs = pos_idxs[:neg_len]
+        neg_idxs = neg_idxs[:neg_len]
         sample_idxs = pos_idxs + neg_idxs
         
         for i in range(5):
@@ -282,8 +287,9 @@ class ActDataset(Dataset):
         label = self.labels[index]
 
         pre_img, pre_joints_lst = preprocess_data(img, joints_lst, self.input_res)
-        pre_joints = reshape_joints(pre_joints_lst)
-        pre_joints = np.transpose(pre_joints, (1, 0))
+        pre_joints = reshape_joints(pre_joints_lst) # (3, 30)
+        # pre_joints = np.transpose(pre_joints, (1, 0)) # (30, 3)
+
         input_img = transforms.ToTensor()(pre_img)        
         pre_joints = torch.as_tensor(pre_joints, dtype=torch.float32)
         label = torch.as_tensor([label], dtype=torch.float32)
