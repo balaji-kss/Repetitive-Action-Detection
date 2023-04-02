@@ -13,10 +13,10 @@ import os
 
 def square_img(img):
 
-    h, w = img.shape[:2]
+    h, w, c = img.shape
     sz = max(h, w)
 
-    sqr_img = np.zeros((sz, sz, 3), dtype='uint8')
+    sqr_img = np.zeros((sz, sz, c), dtype='uint8')
     sqr_img[:h, :w] = img
     
     return sqr_img
@@ -28,8 +28,12 @@ def preprocess_data(image, joints, input_res):
     norm_img = square_img(norm_img)
     norm_joints = normalize_joints(norm_img, joints)
 
-    norm_img = cv2.cvtColor(norm_img, cv2.COLOR_BGR2RGB).astype(np.float32)
-    norm_img = cv2.resize(norm_img, (input_res, input_res))
+    h, w, c = norm_img.shape
+
+    for i in range(c//3):
+        norm_img[:, :, i * 3 : (i + 1) * 3] = cv2.cvtColor(norm_img[:, :, i * 3 : (i + 1) * 3], cv2.COLOR_BGR2RGB)
+
+    norm_img = cv2.resize(norm_img, (input_res, input_res)).astype(np.float32)
     norm_img /= 255.0
     
     return norm_img, norm_joints
@@ -62,12 +66,25 @@ def vis_dataset(dataset):
         img, joints, label = dataset[frameid]
         img, joints, label = img.numpy(), joints.numpy(), label.numpy()
         img = np.transpose(img, (1, 2, 0))
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        
-        img, joints = unnormalize_data(img, joints)
 
-        disp_img = utils.display_skeleton(img, joints)
+        h, w, c = img.shape
+        for i in range(c//3):
+            img[:, :, i * 3 : (i + 1) * 3] = cv2.cvtColor(img[:, :, i * 3 : (i + 1) * 3], cv2.COLOR_BGR2RGB)
+
+        if c == 9:
+            cimg = img[:, :, 3:6].copy()
+            stack_img = np.hstack((img[:,:,6:], img[:,:,3:6]))
+            stack_img = np.hstack((stack_img, img[:,:,:3]))
+        else:
+            cimg = img
+    
+        cimg, joints = unnormalize_data(cimg, joints)
+
+        disp_img = utils.display_skeleton(cimg, joints)
         disp_img = utils.display_label(disp_img, int(label), frameid)
+
+        if c == 9:
+            cv2.imshow("stack image", stack_img)
 
         cv2.imshow("Test", disp_img)
         cv2.waitKey(-1)
@@ -78,7 +95,7 @@ class ActDataset(Dataset):
         data_prefix (str): Path to a directory where pose data is held
     """
 
-    def __init__(self, data_prefix, input_res, num_ts=0, tstride=0, mode="train"):
+    def __init__(self, data_prefix, input_res, num_ts = 0, tstride = 0, mode="train"):
         
         self.mode = "train"
         self.train_ratio = 0.8
@@ -99,8 +116,8 @@ class ActDataset(Dataset):
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
-            # self.train_idxs = list(range(len(self.labels)))
-            self.sample_data()
+            self.train_idxs = list(range(len(self.labels)))
+            # self.sample_data()
 
     def sample_data(self):
         
@@ -203,6 +220,30 @@ class ActDataset(Dataset):
 
         return np.array(data)
 
+    def stack_temp_images(self, index):
+        
+        if self.num_ts == 1:
+            img_path = os.path.join(self.image_dir, str(index) + '.jpg')
+            img = cv2.imread(img_path)
+            return img
+
+        if self.num_ts == 3:
+
+            tids = [index - self.tstride, index, index + self.tstride]
+            stack_img = None
+            
+            for i in range(self.num_ts):
+                tids[i] = min(max(0, tids[i]), self.num_frames - 1)
+                img_path = os.path.join(self.image_dir, str(tids[i]) + '.jpg')
+                img = cv2.imread(img_path)
+                # print(tids[i], ' img shape ', img.shape)
+                if stack_img is None:
+                    stack_img = img
+                else:
+                    stack_img = np.concatenate((img, stack_img), axis=2)
+
+            return stack_img
+
     def __len__(self):
         """Get the size of the dataset."""
 
@@ -219,8 +260,7 @@ class ActDataset(Dataset):
         if self.mode == "val":
             index = self.val_idxs[idx]
 
-        img_path = os.path.join(self.image_dir, str(index) + '.jpg')
-        img = cv2.imread(img_path)
+        img = self.stack_temp_images(index)
         joints = self.joints_2d[index]
         label = self.labels[index]
 
@@ -283,5 +323,5 @@ class TestDataset(Dataset):
 if __name__ == "__main__":
 	
     input_res = 360
-    dataset = ActDataset("simple_data/lifting_1/clip_1", input_res, mode="train")
+    dataset = ActDataset("simple_data/lifting_1/clip_1", input_res, mode="train", num_ts = 3, tstride = 3)
     vis_dataset(dataset)

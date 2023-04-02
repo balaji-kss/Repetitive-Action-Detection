@@ -12,10 +12,10 @@ from torch.optim import lr_scheduler
 
 def data_loader(data_dir, input_size):
 
-    train_set = ActDataset(data_dir, input_size, mode="train")
+    train_set = ActDataset(data_dir, input_size, num_ts = num_ts, tstride = tstride, mode="train")
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 
-    val_set = ActDataset(data_dir, input_size, mode="val")
+    val_set = ActDataset(data_dir, input_size, num_ts = num_ts, tstride = tstride, mode="val")
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
     return train_loader, val_loader
@@ -44,7 +44,7 @@ def vis_dataloader(dataloader):
 
 def train(train_loader, val_loader):
 
-    model = ImageActNet()
+    model = ImageActNet(inp_channels = inp_channels)
     model = model.to(device)
     # summary(model, (3, 224, 224))
 
@@ -92,8 +92,9 @@ def train(train_loader, val_loader):
         model_path = os.path.join(model_dir, str(epoch) + '.pth') 
         torch.save(model.state_dict(), model_path)
 
-        print("[INFO] validate model...", flush=True)
-        validate(val_loader, model)
+        if epoch % 5 == 0:
+            print("[INFO] validate model...", flush=True)
+            validate(val_loader, model)
 
 def validate(val_loader, model):
 
@@ -120,15 +121,18 @@ def validate(val_loader, model):
 
 if __name__ == '__main__':
     
-    batch_size = 64
+    batch_size = 32
     input_size = 224
     num_class = 1
     device = "cuda"
-    lr = 5e-3
+    lr = 1e-3
     num_epoch = 60
+    num_ts = 3
+    tstride = 3
+    inp_channels = 3 * num_ts
 
-    data_dir = "simple_data/lifting_1/clip_1"
-    model_dir = './models/' + data_dir + ' exp1/'
+    data_dir = "simple_data/lifting_1/clip_1/"
+    model_dir = './models/' + data_dir + ' exp2/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)

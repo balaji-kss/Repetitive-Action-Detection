@@ -2,6 +2,8 @@ from torch.utils.data import Dataset, DataLoader
 import cv2
 import matplotlib.pyplot as plt
 import math
+import numpy as np
+import os
 
 def display_skeleton(image, data):
 
@@ -26,6 +28,22 @@ def display_label(image, label, frameid):
 
 	return image
 
+def extract_frames(video_path, save_dir):
+
+    cap = cv2.VideoCapture(video_path)    
+
+    frames = []
+    i = 0
+    while True:
+
+        ret, frame = cap.read()
+        if ret is False: break
+
+        img_path = os.path.join(save_dir, str(i) + '.jpg')
+        cv2.imwrite(img_path, frame)
+
+        i += 1
+
 def display_result(image, conf, frameid, thresh):
 
     if conf >= thresh:
@@ -46,3 +64,13 @@ def display_result(image, conf, frameid, thresh):
     )
 
     return image
+
+if __name__ == "__main__":
+
+    video_path = '/home/balaji/Tumeke/simple_data/lifting_1/clip_1/video.mp4'
+    save_dir = '/home/balaji/Tumeke/simple_data/lifting_1/clip_1/images/'
+
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+        
+    extract_frames(video_path)
