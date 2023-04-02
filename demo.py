@@ -40,8 +40,8 @@ def predict(model, image, joints, input_size):
     pre_joints = pre_joints.to(device)
     out = model(pre_img, pre_joints)
     # out = model(pre_img)
-    out = out[0].detach().cpu().numpy()
-    out = min(max(0, out), 1)
+    out = out[0].detach().cpu().numpy() / pos_val
+    # out = min(max(0, out), 1)
     out = round(float(out), 3)
 
     return out
@@ -83,6 +83,7 @@ def run(dataset, model_path, input_size, device):
         print('save video path: ', out_video_path)
         out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (720, 480))
 
+    len_sw = []
     for fid in range(len(dataset)):
 
         # if fid < 1560:continue
@@ -100,11 +101,11 @@ def run(dataset, model_path, input_size, device):
 
 if __name__ == "__main__":
 
-    root_dir = "simple_data/lifting_3/"
-    # root_dir = "hard_data/folding/"
+    # root_dir = "simple_data/lifting_3/"
+    root_dir = "hard_data/folding/"
     inp_video_dir = root_dir + "clip_2/"
-    exp = 'exp2'
-    model_path = './models/' + root_dir + '/' + exp + '/60.pth'
+    exp = 'exp3_4'
+    model_path = './models/' + root_dir + '/' + exp + '/55.pth'
     out_video_dir = inp_video_dir + exp + '/'
     out_video_path = out_video_dir + 'res.mp4'
 
@@ -117,10 +118,14 @@ if __name__ == "__main__":
 
     input_size = 224
     device = "cuda"
-    thresh = 0.6
+    thresh = 0.5
     num_ts = 3
     tstride = 3
     write_video = 0
-
+    pos_val = 3
+    
     dataset = TestDataset(inp_video_dir)
+
+    len_sw = dataset.video.fps // 2 # 0.5 sec smoothing
+
     run(dataset, model_path, input_size, device)

@@ -51,8 +51,9 @@ def train(train_loader, val_loader):
 
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.SGD(params, lr=lr)
-    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[20, 40], gamma=0.3)
-    regloss = torch.nn.SmoothL1Loss() 
+    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[20, 40], gamma=0.1)
+    # regloss = torch.nn.SmoothL1Loss() 
+    regloss = torch.nn.MSELoss() 
 
     print("[INFO] training the network...", flush=True)
 
@@ -134,11 +135,12 @@ if __name__ == '__main__':
 
     root_dir = "hard_data/folding/"
     data_dir = root_dir + 'clip_1/'
-    model_dir = './models/' + root_dir + 'exp3/'
+    model_dir = './models/' + root_dir + 'exp3_4/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
 
+    print('lr ', lr)
     print('data_dir: ', data_dir)
     print('model_dir: ', model_dir)
 

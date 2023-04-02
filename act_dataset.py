@@ -68,11 +68,12 @@ def vis_dataset(dataset):
     for frameid in range(len(dataset)):
         
         img, joints, label = dataset[frameid]
-        img, joints, label = img.numpy(), joints.numpy(), label.numpy() # (9, 360, 360), (3, 30)
+        img, joints, label = img.numpy(), joints.numpy(), label.numpy() # (9, 360, 360), (30, 3)
         
         h, w = img.shape[1:]
         img = img.reshape(3, 3, h, w)
         imgs = np.transpose(img, (0, 2, 3, 1))
+        joints = np.transpose(joints, (1, 0))
         num_imgs = imgs.shape[0]
 
         stack_img = None
@@ -110,7 +111,7 @@ class ActDataset(Dataset):
     def __init__(self, data_prefix, input_res, num_ts = 0, tstride = 0, mode="train"):
         
         self.mode = "train"
-        self.train_ratio = 0.8
+        self.train_ratio = 0.95
         self.input_res = input_res
         self.num_ts = num_ts
         self.tstride = tstride
@@ -125,15 +126,15 @@ class ActDataset(Dataset):
 
         self.num_frames = len(self.joints_2d)
         self.neg_val = 0
-        self.pos_val = 1
+        self.pos_val = 3
         self.neg_ratio = 3
         self.fps = self.video.fps
         print('self.fps ', self.fps)
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
-            self.train_idxs = list(range(len(self.labels)))
-            # self.sample_data()
+            # self.train_idxs = list(range(len(self.labels)))
+            self.sample_data()
 
     def sample_data(self):
         
@@ -145,17 +146,16 @@ class ActDataset(Dataset):
         print('pos_samples ', len(pos_idxs))
         print('neg_samples ', len(neg_idxs))
 
+        pos_len = len(pos_idxs)
+        neg_len = int(self.neg_ratio * pos_len)
+        neg_stride = max(1, len(neg_idxs) // neg_len)
+
+        sample_pos_idxs = pos_idxs
+        sample_neg_idxs = neg_idxs[::neg_stride]
+
         ## sampling
         random.seed(100)
-        for i in range(5):
-            random.shuffle(pos_idxs)
-            random.shuffle(neg_idxs)
-
-        min_len = min(len(pos_idxs), len(neg_idxs))
-        neg_len = int(self.neg_ratio * min_len)
-        pos_idxs = pos_idxs[:neg_len]
-        neg_idxs = neg_idxs[:neg_len]
-        sample_idxs = pos_idxs + neg_idxs
+        sample_idxs = sample_pos_idxs + sample_neg_idxs
         
         for i in range(5):
             random.shuffle(sample_idxs)
@@ -163,11 +163,12 @@ class ActDataset(Dataset):
         num_train = int(self.train_ratio * len(sample_idxs))
         self.train_idxs = sample_idxs[:num_train]
         self.val_idxs = sample_idxs[num_train:]
-        
+
         print("*** after sampling ***")
+        print('neg_stride ', neg_stride)
         print('tot_samples ', len(sample_idxs))
-        print('pos_samples ', len(pos_idxs))
-        print('neg_samples ', len(neg_idxs))
+        print('pos_samples ', len(sample_pos_idxs))
+        print('neg_samples ', len(sample_neg_idxs))
         print('train_samples ', len(self.train_idxs))
         print('val_samples ', len(self.val_idxs))
         print('train ', self.train_idxs[:10])
@@ -288,7 +289,7 @@ class ActDataset(Dataset):
 
         pre_img, pre_joints_lst = preprocess_data(img, joints_lst, self.input_res)
         pre_joints = reshape_joints(pre_joints_lst) # (3, 30)
-        # pre_joints = np.transpose(pre_joints, (1, 0)) # (30, 3)
+        pre_joints = np.transpose(pre_joints, (1, 0)) # (30, 3)
 
         input_img = transforms.ToTensor()(pre_img)        
         pre_joints = torch.as_tensor(pre_joints, dtype=torch.float32)
