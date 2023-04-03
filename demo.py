@@ -12,8 +12,8 @@ import os
 
 def load_net(model_path, device):
 
-    model = ImagePoseActNet(inp_channels=3*num_ts)
-    # model = ImageActNet(inp_channels=3*num_ts)
+    model = ImagePoseActNet(inp_channels = 3 * num_ts)
+    # model = ImageActNet(inp_channels = 3 * num_ts)
     model.load_state_dict(torch.load(model_path))
     model = model.to(device)
     model.eval()
@@ -36,6 +36,9 @@ def load_data(image, joints, input_size):
 def predict(model, image, joints, input_size):
 
     pre_img, pre_joints = load_data(image, joints, input_size)
+
+    # vis_input(pre_img, pre_joints)
+
     pre_img = pre_img.to(device)
     pre_joints = pre_joints.to(device)
     out = model(pre_img, pre_joints)
@@ -62,7 +65,7 @@ def stack_data(dataset, fid):
 
         for i in range(num_ts):
             tids[i] = min(max(0, tids[i]), num_frames - 1)
-            print('num_frames, tid', num_frames, tids[i])
+            # print('num_frames, tid', num_frames, tids[i])
             img = dataset[tids[i]]["image"]
             joints = dataset[tids[i]]["joints"]
 
@@ -78,6 +81,34 @@ def stack_data(dataset, fid):
         temp_joints.reverse()
 
         return stack_img, stack_img[:, :, 3:6].copy(), temp_joints
+
+def vis_input(imgs, joints):
+
+    # (1, 9, 224, 224) (1, 30, 3)
+    imgs, joints = imgs.numpy()[0], joints.numpy()[0]
+    # (9, 224, 224) (30, 3)
+
+    h, w = imgs.shape[1:]
+    imgs = imgs.reshape(3, 3, h, w)
+    imgs = np.transpose(imgs, (0, 2, 3, 1)) # (3, 224, 224, 3)
+    joints = np.transpose(joints, (1, 0)) # # (3, 30)
+    num_imgs = imgs.shape[0]
+
+    stack_img = None
+    for i in range(num_imgs):
+        img = imgs[i].copy()
+        jts = joints[i].reshape(15, 2)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img, jts = act_dataset.unnormalize_data(img, jts)
+        disp_img = utils.display_skeleton(img, jts)
+
+        if stack_img is None:
+            stack_img = disp_img 
+        else:
+            stack_img = np.hstack((disp_img, stack_img))
+
+    cv2.imshow("stack_img", stack_img)
+    cv2.waitKey(-1)
 
 def get_mov_avg(smooth_window, len_sw, cur_pred):
 
@@ -100,7 +131,7 @@ def run(dataset, model_path, input_size, device):
     smooth_win = []
     for fid in range(len(dataset)):
 
-        if fid < 15900: continue
+        if fid < 3000: continue
 
         input_, disp_frame, joints = stack_data(dataset, fid)
 
@@ -111,7 +142,7 @@ def run(dataset, model_path, input_size, device):
         prev_avg, smooth_win = get_mov_avg(smooth_win, len_sw, pred)
 
         # print('smooth_win ', smooth_win)
-        frame_confs.append(prev_avg)
+        frame_confs.append(pred)
 
         disp_frame = utils.display_result(disp_frame, pred, prev_avg, fid, thresh)
 
@@ -133,7 +164,7 @@ def write_lst(lst_path, frame_confs):
 
 if __name__ == "__main__":
 
-    clip = "clip_4"
+    clip = "clip_3"
     root_dir = "simple_data/lifting_2/"
     # root_dir = "hard_data/kontoor/"
     inp_video_dir = root_dir + clip + "/"
@@ -157,7 +188,7 @@ if __name__ == "__main__":
     thresh = 0.5
     num_ts = 3
     tstride = 3
-    write_video = 1
+    write_video = 0
     pos_val = 3
     
     dataset = TestDataset(inp_video_dir)

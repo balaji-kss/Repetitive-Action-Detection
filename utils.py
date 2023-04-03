@@ -53,8 +53,8 @@ def display_result(image, conf, sm_conf, frameid, thresh):
         status = "task not ended"
         color = (255, 0, 0)
 
-    # text_ = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status
-    text_ = str(frameid) + " : " + status
+    text_ = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status
+    # text_ = str(frameid) + " : " + status
 
     cv2.putText(
         img = image,

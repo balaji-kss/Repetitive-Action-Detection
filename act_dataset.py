@@ -25,8 +25,8 @@ def preprocess_data(image, joints, input_res):
     
     norm_img = np.copy(image)
 
-    norm_img = square_img(norm_img)
-
+    norm_img = square_img(norm_img) # (sz, sz, 9) joints: # ([15, 2]*3)
+    
     norm_joints_lst = []
     for i in range(len(joints)):
         norm_joints = normalize_joints(norm_img, joints[i])
@@ -72,15 +72,15 @@ def vis_dataset(dataset):
         
         h, w = img.shape[1:]
         img = img.reshape(3, 3, h, w)
-        imgs = np.transpose(img, (0, 2, 3, 1))
-        joints = np.transpose(joints, (1, 0))
+        imgs = np.transpose(img, (0, 2, 3, 1)) # (3, sz, sz, 3)
+        joints = np.transpose(joints, (1, 0)) # # (3, 30)
         num_imgs = imgs.shape[0]
 
         stack_img = None
         for i in range(num_imgs):
             img = imgs[i].copy()
             jts = joints[i].reshape(15, 2)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             img, jts = unnormalize_data(img, jts)
             disp_img = utils.display_skeleton(img, jts)
 
@@ -130,6 +130,8 @@ class ActDataset(Dataset):
         self.neg_ratio = 3
         self.fps = self.video.fps
         print('self.fps ', self.fps)
+        print('self.num_ts ', self.num_ts)
+        print('self.tstride ', self.tstride)
 
         if self.mode == "train" or self.mode == "val":
             self.labels = self.load_gt()
@@ -348,7 +350,7 @@ class TestDataset(Dataset):
 if __name__ == "__main__":
 	
     input_res = 360
-    inp_dir = "simple_data/lifting_2/clip_1"
-    # inp_dir = "hard_data/kontoor/clip_1"
+    # inp_dir = "simple_data/lifting_2/clip_1"
+    inp_dir = "hard_data/kontoor/clip_1"
     dataset = ActDataset(inp_dir, input_res, mode="train", num_ts = 3, tstride = 3)
     vis_dataset(dataset)

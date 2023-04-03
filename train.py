@@ -27,19 +27,35 @@ def vis_dataloader(dataloader):
     dataiter = iter(dataloader)
     imgs, joints, labels = dataiter.next()
     imgs, joints, labels = imgs.numpy(), joints.numpy(), labels.numpy()
-    imgs = np.transpose(imgs, (0, 2, 3, 1)).squeeze()
+    # (32, 9, 224, 224) (32, 30, 3)
+
+    h, w = imgs.shape[-2:]
+    imgs = imgs.reshape(-1, 3, 3, h, w)
+    imgs = np.transpose(imgs, (0, 1, 3, 4, 2)).squeeze()
+    joints = np.transpose(joints, (0, 2, 1))
     num_images = imgs.shape[0]
+    # (32, 3, 224, 224, 3) (32, 3, 30)
 
-    for i in range(num_images):
-        
-        img, joint, label = imgs[i], joints[i], labels[i]
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        img, joint = unnormalize_data(img, joint)
+    for bz in range(num_images):
 
-        disp_img = utils.display_skeleton(img, joint)
-        cv2.imshow("Test", disp_img)
-        print('label ', int(label))
+        timgs, tjoints = imgs[bz], joints[bz]
+        label = labels[bz]
 
+        stack_img = None
+        for i in range(timgs.shape[0]):
+            img = timgs[i].copy()
+            jts = tjoints[i].reshape(15, 2)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            img, jts = unnormalize_data(img, jts)
+            disp_img = utils.display_skeleton(img, jts)
+
+            if stack_img is None:
+                stack_img = disp_img 
+            else:
+                stack_img = np.hstack((disp_img, stack_img))
+
+        stack_img = utils.display_label(stack_img, int(label), bz)
+        cv2.imshow("stack_img", stack_img)
         cv2.waitKey(-1)
 
 def train(train_loader, val_loader):
@@ -147,6 +163,6 @@ if __name__ == '__main__':
 
     train_loader, val_loader = data_loader(data_dir, input_size)
     
-    # vis_dataloader(train_loader)
+    vis_dataloader(train_loader)
 
-    train(train_loader, val_loader)
+    # train(train_loader, val_loader)
