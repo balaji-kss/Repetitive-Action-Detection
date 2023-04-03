@@ -2,3 +2,4 @@ inp_video_dir   simple_data/lifting_3/clip_2/
 out_video_path   simple_data/lifting_3/clip_2/exp3_4/lifting_3_clip_2.mp4
 save_lst_path   simple_data/lifting_3/clip_2/exp3_4/lifting_3_clip_2.txt
 model_path  ./models/simple_data/lifting_3//exp3_4/60.pth
+vw, vh, vfps  360 640 16.0

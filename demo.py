@@ -123,15 +123,18 @@ def get_mov_avg(smooth_window, len_sw, cur_pred):
 def run(dataset, model_path, input_size, device):
 
     model = load_net(model_path, device)
+    vw, vh = dataset.video.width, dataset.video.height
+    vfps = dataset.video.fps
+    print('vw, vh, vfps ', vw, vh, vfps, flush=True)
 
     if write_video:
-        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 16, (270, 480))
+        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), vfps, (vw, vh))
 
     frame_confs = []
     smooth_win = []
     for fid in range(len(dataset)):
 
-        if fid < 3000: continue
+        # if fid < 3000: continue
 
         input_, disp_frame, joints = stack_data(dataset, fid)
 
@@ -165,11 +168,11 @@ def write_lst(lst_path, frame_confs):
 if __name__ == "__main__":
 
     clip = "clip_3"
-    root_dir = "simple_data/lifting_2/"
+    root_dir = "simple_data/lifting_1/"
     # root_dir = "hard_data/kontoor/"
     inp_video_dir = root_dir + clip + "/"
     exp = 'exp3_4'
-    model_path = './models/' + root_dir + '/' + exp + '/30.pth'
+    model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
     act_name = root_dir.rsplit('/')[1] + '_'
     out_video_path = out_video_dir + act_name + clip + '.mp4'
@@ -188,7 +191,7 @@ if __name__ == "__main__":
     thresh = 0.5
     num_ts = 3
     tstride = 3
-    write_video = 0
+    write_video = 1
     pos_val = 3
     
     dataset = TestDataset(inp_video_dir)

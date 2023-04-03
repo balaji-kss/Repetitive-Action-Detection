@@ -1,0 +1,5 @@
+inp_video_dir   hard_data/kontoor/clip_2/
+out_video_path   hard_data/kontoor/clip_2/exp3_4/kontoor_clip_2.mp4
+save_lst_path   hard_data/kontoor/clip_2/exp3_4/kontoor_clip_2.txt
+model_path  ./models/hard_data/kontoor//exp3_4/60.pth
+vw, vh, vfps  270 480 29.97

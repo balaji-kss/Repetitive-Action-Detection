@@ -2,12 +2,4 @@ inp_video_dir   simple_data/lifting_2/clip_3/
 out_video_path   simple_data/lifting_2/clip_3/exp3_4/lifting_2_clip_3.mp4
 save_lst_path   simple_data/lifting_2/clip_3/exp3_4/lifting_2_clip_3.txt
 model_path  ./models/simple_data/lifting_2//exp3_4/30.pth
-Traceback (most recent call last):
-  File "demo.py", line 160, in <module>
-    run(dataset, model_path, input_size, device)
-  File "demo.py", line 100, in run
-    input_, disp_frame, joints = stack_data(dataset, fid)
-  File "demo.py", line 70, in stack_data
-    stack_img = np.concatenate((img, stack_img), axis=2)
-  File "<__array_function__ internals>", line 6, in concatenate
-ValueError: zero-dimensional arrays cannot be concatenated
+vw, vh, vfps  480 720 15.999011016703358
