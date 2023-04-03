@@ -62,8 +62,13 @@ def stack_data(dataset, fid):
 
         for i in range(num_ts):
             tids[i] = min(max(0, tids[i]), num_frames - 1)
+            print('num_frames, tid', num_frames, tids[i])
             img = dataset[tids[i]]["image"]
-            joints = dataset[fid]["joints"]
+            joints = dataset[tids[i]]["joints"]
+
+            if img is None:
+                return None, None, None
+
             if stack_img is None:
                 stack_img = img
             else:
@@ -95,9 +100,11 @@ def run(dataset, model_path, input_size, device):
     smooth_win = []
     for fid in range(len(dataset)):
 
-        # if fid < 1560:continue
+        if fid < 15900: continue
 
         input_, disp_frame, joints = stack_data(dataset, fid)
+
+        if input_ is None:continue
 
         pred = predict(model, input_, joints, input_size)
         
@@ -126,12 +133,12 @@ def write_lst(lst_path, frame_confs):
 
 if __name__ == "__main__":
 
-    clip = "clip_2"
-    # root_dir = "simple_data/lifting_1/"
-    root_dir = "hard_data/kontoor/"
+    clip = "clip_4"
+    root_dir = "simple_data/lifting_2/"
+    # root_dir = "hard_data/kontoor/"
     inp_video_dir = root_dir + clip + "/"
     exp = 'exp3_4'
-    model_path = './models/' + root_dir + '/' + exp + '/60.pth'
+    model_path = './models/' + root_dir + '/' + exp + '/30.pth'
     out_video_dir = inp_video_dir + exp + '/'
     act_name = root_dir.rsplit('/')[1] + '_'
     out_video_path = out_video_dir + act_name + clip + '.mp4'
