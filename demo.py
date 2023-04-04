@@ -12,8 +12,9 @@ import os
 
 def load_net(model_path, device):
 
+    # Load Task Boundary Detection model
+
     model = ImagePoseActNet(inp_channels = 3 * num_ts)
-    # model = ImageActNet(inp_channels = 3 * num_ts)
     model.load_state_dict(torch.load(model_path))
     model = model.to(device)
     model.eval()
@@ -22,9 +23,11 @@ def load_net(model_path, device):
 
 def load_data(image, joints, input_size):
 
+    # Preprocess input
+
     pre_img, pre_joints = act_dataset.preprocess_data(image, joints, input_size)
-    pre_joints = act_dataset.reshape_joints(pre_joints) #(224, 224, 9) (3, 30)
-    pre_joints = np.transpose(pre_joints, (1, 0)) #(30, 3)
+    pre_joints = act_dataset.reshape_joints(pre_joints) 
+    pre_joints = np.transpose(pre_joints, (1, 0)) 
     pre_joints = torch.as_tensor(pre_joints, dtype=torch.float32)
 
     pre_img = transforms.ToTensor()(pre_img)
@@ -35,6 +38,8 @@ def load_data(image, joints, input_size):
 
 def predict(model, image, joints, input_size):
 
+    # Predict result
+
     pre_img, pre_joints = load_data(image, joints, input_size)
 
     # vis_input(pre_img, pre_joints)
@@ -42,17 +47,19 @@ def predict(model, image, joints, input_size):
     pre_img = pre_img.to(device)
     pre_joints = pre_joints.to(device)
     out = model(pre_img, pre_joints)
-    # out = model(pre_img)
+
     out = out[0].detach().cpu().numpy() / pos_val
-    # out = min(max(0, out), 1)
+    out = min(max(0, out), 1)
     out = round(float(out), 3)
 
     return out
 
 def stack_data(dataset, fid):
 
+    # Stack temporal data
+
     num_frames = len(dataset)
-    
+
     if num_ts == 1:
         frame = dataset[fid]["image"]
         joints = dataset[fid]["joints"]
@@ -65,7 +72,6 @@ def stack_data(dataset, fid):
 
         for i in range(num_ts):
             tids[i] = min(max(0, tids[i]), num_frames - 1)
-            # print('num_frames, tid', num_frames, tids[i])
             img = dataset[tids[i]]["image"]
             joints = dataset[tids[i]]["joints"]
 
@@ -84,14 +90,14 @@ def stack_data(dataset, fid):
 
 def vis_input(imgs, joints):
 
-    # (1, 9, 224, 224) (1, 30, 3)
+    # Visualize input : sanity check
+
     imgs, joints = imgs.numpy()[0], joints.numpy()[0]
-    # (9, 224, 224) (30, 3)
 
     h, w = imgs.shape[1:]
     imgs = imgs.reshape(3, 3, h, w)
-    imgs = np.transpose(imgs, (0, 2, 3, 1)) # (3, 224, 224, 3)
-    joints = np.transpose(joints, (1, 0)) # # (3, 30)
+    imgs = np.transpose(imgs, (0, 2, 3, 1))
+    joints = np.transpose(joints, (1, 0))
     num_imgs = imgs.shape[0]
 
     stack_img = None
@@ -112,6 +118,8 @@ def vis_input(imgs, joints):
 
 def get_mov_avg(smooth_window, len_sw, cur_pred):
 
+    # Get moving average to smoothen prediction
+
     smooth_window.append(cur_pred)
     if len(smooth_window) > len_sw:
         smooth_window.pop(0)
@@ -122,10 +130,12 @@ def get_mov_avg(smooth_window, len_sw, cur_pred):
 
 def run(dataset, model_path, input_size, device):
 
+    # Run boundary detection demo
+
+    # load model
     model = load_net(model_path, device)
     vw, vh = dataset.video.width, dataset.video.height
     vfps = dataset.video.fps
-    print('vw, vh, vfps ', vw, vh, vfps, flush=True)
 
     if write_video:
         out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), vfps, (vw, vh))
@@ -133,20 +143,20 @@ def run(dataset, model_path, input_size, device):
     frame_confs = []
     smooth_win = []
     for fid in range(len(dataset)):
-
-        # if fid < 1600: continue
-
+        
+        # stack temporal images and joints
         input_, disp_frame, joints = stack_data(dataset, fid)
 
         if input_ is None:continue
 
+        # predict task boundary
         pred = predict(model, input_, joints, input_size)
         
+        # smoothen prediction
         prev_avg, smooth_win = get_mov_avg(smooth_win, len_sw, pred)
-
-        # print('smooth_win ', smooth_win)
         frame_confs.append(pred)
 
+        # display results
         disp_frame = utils.display_result(disp_frame, pred, prev_avg, fid, thresh)
 
         if write_video:
@@ -154,6 +164,9 @@ def run(dataset, model_path, input_size, device):
         else:
             cv2.imshow('frame ', disp_frame)
             cv2.waitKey(-1)
+
+    # write all predictions to a list for 
+    # post processing
 
     if write_video:
         write_lst(save_lst_path, frame_confs)
@@ -186,6 +199,7 @@ if __name__ == "__main__":
     print('save_lst_path  ', save_lst_path)
     print('model_path ', model_path, flush=True)
 
+    # hyperparameters
     input_size = 224
     device = "cuda"
     thresh = 0.5
@@ -193,9 +207,11 @@ if __name__ == "__main__":
     tstride = 3
     write_video = 1
     pos_val = 3
-    
+
+    # load dataset
     dataset = TestDataset(inp_video_dir)
 
     len_sw = dataset.video.fps // 3 # 0.5 sec smoothing
 
+    # run demo
     run(dataset, model_path, input_size, device)

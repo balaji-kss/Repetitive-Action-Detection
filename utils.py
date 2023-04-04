@@ -7,6 +7,8 @@ import os
 
 def display_skeleton(image, data):
 
+    # display skeleton joints in the image
+
 	for i in range(data.shape[0]):
 		if data[i][0] == -1 or data[i][1] == -1:
 			continue
@@ -15,6 +17,8 @@ def display_skeleton(image, data):
 	return image
 
 def display_label(image, label, frameid):
+
+    # display label in the image
 
 	cv2.putText(
 		img = image,
@@ -29,6 +33,8 @@ def display_label(image, label, frameid):
 	return image
 
 def extract_frames(video_path, save_dir):
+
+    # Extract all frames in a video
 
     cap = cv2.VideoCapture(video_path)    
 
@@ -46,6 +52,8 @@ def extract_frames(video_path, save_dir):
 
 def display_result(image, conf, sm_conf, frameid, thresh):
 
+    # display results
+
     if sm_conf >= thresh:
         status = "task ended"
         color = (0, 0, 255)
@@ -54,7 +62,6 @@ def display_result(image, conf, sm_conf, frameid, thresh):
         color = (255, 0, 0)
 
     text_ = str(frameid) + " : " + str(conf) + " : "  + str(sm_conf) + " : " + status
-    # text_ = str(frameid) + " : " + status
 
     cv2.putText(
         img = image,
@@ -75,8 +82,5 @@ if __name__ == "__main__":
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    
-    print('video_path ', video_path)
-    print('save_dir ', save_dir)
 
     extract_frames(video_path, save_dir)

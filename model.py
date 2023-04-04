@@ -3,7 +3,6 @@ import torch.nn.functional as F
 
 import torch.nn as nn
 from torchvision import models
-# from torchsummary import summary
 import torch
 
 class ImageActNet(nn.Module):
@@ -20,16 +19,19 @@ class ImageActNet(nn.Module):
         return x
 
 class ImagePoseActNet(nn.Module):
+
+    # Task Boundary Detection Network
+
     def __init__(self, inp_channels=3, num_classes=1):
         super().__init__()
 
-        # Image Features
+        # Image Feature Extractor
         self.pretrained = models.resnet18(pretrained=True)
         self.pretrained.conv1 = nn.Conv2d(inp_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
         features = nn.ModuleList(self.pretrained.children())[:-1]
         self.pretrained = nn.Sequential(*features)
 
-        # Pose Features
+        # Pose Feature Extractor
         self.conv1 = nn.Conv1d(30, 256, 1, stride=1, padding=1)
         self.bn1 = nn.BatchNorm1d(num_features=256, eps=1e-5, affine=True)
 
@@ -49,10 +51,12 @@ class ImagePoseActNet(nn.Module):
 
     def forward(self, img, joints):
         
+        # Image features
         bz = img.shape[0]
         features = self.pretrained(img)
         features = features.view(bz,-1)
 
+        # Pose features
         p_out = self.relu(self.bn1(self.conv1(joints))) # [256, 5]
         p_out = self.relu(self.bn2(self.conv2(p_out)))  # [256, 7]
         p_out = self.relu(self.bn3(self.conv3(p_out)))  # [256, 3]
@@ -63,6 +67,7 @@ class ImagePoseActNet(nn.Module):
 
         concat = torch.cat((features, p_out), 1)
         
+        # Fuse image and pose features
         out = self.relu(self.fc3(concat))
         out = self.relu(self.fc4(out))
         out = self.relu(self.fc5(out))
@@ -73,4 +78,4 @@ if __name__ == "__main__":
 
     model = ImagePoseActNet(num_classes=1)
     print('model ', model)
-    # summary(model, [(3, 224, 224), (30, 3)])
+    
