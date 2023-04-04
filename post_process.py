@@ -17,7 +17,7 @@ def display_label(image, frameid, label):
     cv2.putText(
         img = image,
         text = text,
-        org = (20, 20),
+        org = (20, 40),
         fontFace = cv2.FONT_HERSHEY_DUPLEX,
         fontScale = 0.5,
         color = color,
@@ -207,8 +207,8 @@ def run(video_path, out_video_path, lst_path, out_csv_file, conf_thresh):
     fps, width, height = int(fps), int(width), int(height)
     print('fps, width, height ', fps, width, height)
 
-    sw_len = fps // 3
-    valid_interval = fps // 2
+    sw_len = fps // 10
+    valid_interval = fps // 10
     inter_dist = fps
       
     frame_preds = read_lst(lst_path)
@@ -257,14 +257,14 @@ if __name__ == "__main__":
     inp_dir = '/home/balajisundar/Documents/US/NEU/Full-time/Company/TuMeke/tumeke_takehome_final/'
     root_dir = './results/'
 
-    # inp_video_path = inp_dir + 'hard_data/folding/clip_2/video.mp4'
-    inp_video_path = inp_dir + 'simple_data/lifting_3/clip_2/video.mp4'
-    video_path = root_dir + 'lifting_3_clip_2.mp4'
-    lst_path = root_dir + 'lifting_3_clip_2.txt'
-    out_csv_file = root_dir + 'lifting_3_clip_2.csv'
-    conf_thresh = 0.5
-    write_video = 1
+    inp_video_path = inp_dir + 'hard_data/kontoor/clip_2/video.mp4'
+    # inp_video_path = inp_dir + 'simple_data/lifting_3/clip_2/video.mp4'
+    video_path = root_dir + 'kontoor_clip_2.mp4'
+    lst_path = root_dir + 'kontoor_clip_2.txt'
+    out_csv_file = root_dir + 'kontoor_clip_2.csv'
+    conf_thresh = 0.35
+    write_video = 0
     out_video_path = video_path[:-4] + 'f.mp4'
     print('out_video_path ', out_video_path)
-    
-    run(inp_video_path, out_video_path, lst_path, out_csv_file, conf_thresh)
+
+    run(video_path, out_video_path, lst_path, out_csv_file, conf_thresh)
