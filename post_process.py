@@ -9,13 +9,15 @@ def display_label(image, frameid, label):
 
     if label == 1:
         color = (0, 0, 255)
+        text = str(frameid) + " : task ended"
     else:
         color = (255, 0, 0)
+        text = str(frameid) + " : task not ended"
 
     cv2.putText(
         img = image,
-        text = str(frameid) + " : " + str(label),
-        org = (20, 40),
+        text = text,
+        org = (20, 20),
         fontFace = cv2.FONT_HERSHEY_DUPLEX,
         fontScale = 0.5,
         color = color,
@@ -51,10 +53,6 @@ def read_lst(lst_path):
         words = lines[0].rstrip().strip('\n').split(',')        
         
     return np.array([float(word) for word in words])
-
-def get_durations(frame_preds, avg_preds, thresh):
-
-    print('frame_confs ', frame_preds.shape, avg_preds.shape)
 
 def get_mov_avg(smooth_window, len_sw, cur_pred):
 
@@ -123,7 +121,6 @@ def get_durations(frame_preds, pred_avgs, conf_thresh, inter_dist, valid_interva
     pred_avgs[pred_avgs >= conf_thresh] = 1
     pred_avgs[pred_avgs < conf_thresh] = 0
 
-    print('pred_avgs ', pred_avgs)
     intervals = get_intervals(pred_avgs)
     print('intervals ', intervals, len(intervals))
 
@@ -153,7 +150,7 @@ def remove_outliers(arr):
     q1 = np.quantile(arr, 0.25)
     q3 = np.quantile(arr, 0.75)
     iqr = q3 - q1
-    lower_bound = q1 - 1.25*iqr
+    lower_bound = q1 - 1.25 * iqr
     print('lower_bound ', lower_bound)
 
     return np.where(arr < lower_bound)[0]
@@ -170,11 +167,12 @@ def get_task_dur(intervals):
 
     print('boundary_dur ', boundary_dur)
     print('task_dur ', task_dur, task_dur.shape)
-    
+    print('before task_dur min max ', np.min(task_dur), np.max(task_dur))
+
     # remove outliers
     idxs = remove_outliers(task_dur)
     
-    fintervals_np = np.delete(intervals_np, idxs + 1, axis=0)
+    fintervals_np = np.delete(intervals_np, idxs, axis=0)
     print('fintervals_np ', fintervals_np)
 
     ftask_dur = fintervals_np[1:, 0] - fintervals_np[:-1, 0]
@@ -189,6 +187,8 @@ def validate(task_dur, intervals_np):
     ftask_dur = np.insert(ftask_dur, 0, 0, axis=0)
 
     val = np.concatenate((fintervals_np, ftask_dur.reshape(-1, 1)), axis=1)
+
+    print('min max dur ', np.min(ftask_dur[1:]), np.max(ftask_dur), np.sort(ftask_dur))
     print('val ', val, val.shape)
     
 def write_csv(out_csv_file, labels):
@@ -198,11 +198,14 @@ def write_csv(out_csv_file, labels):
         for label in labels:
             writer.writerow([label])
 
-def run(video_path, lst_path, out_csv_file, conf_thresh):
+def run(video_path, out_video_path, lst_path, out_csv_file, conf_thresh):
 
     cap = cv2.VideoCapture(video_path)    
     fps = cap.get(cv2.CAP_PROP_FPS)
-    print('fps ', fps)
+    width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+    fps, width, height = int(fps), int(width), int(height)
+    print('fps, width, height ', fps, width, height)
 
     sw_len = fps // 3
     valid_interval = fps // 2
@@ -213,41 +216,55 @@ def run(video_path, lst_path, out_csv_file, conf_thresh):
     
     assert len(frame_preds) == len(pred_avgs)
     num_frames = len(frame_preds)
+    print('num_frames ', num_frames)
 
     task_durations, filtered_intervals = get_durations(frame_preds, pred_avgs, conf_thresh, inter_dist, valid_interval)
     task_durations_sec = task_durations / fps
+
     write_csv(out_csv_file, task_durations_sec)
 
     labels = label_frames(filtered_intervals, num_frames)
 
     i = -1
-    
+
+    if write_video:
+        out = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+
     while True:
 
         ret, frame = cap.read()
         if ret is False: break
         i += 1
-        if i % 3 != 0: continue
         
-        # if i < 8900:continue
+        # if i % 3 != 0: continue
 
+        # if i < 8000:continue
+        if i >= num_frames:break
+        
         pred, pred_avg = frame_preds[i], pred_avgs[i]
 
         display_label(frame, i, labels[i])
 
-        cv2.imshow('frame ', frame)
-        # print('pred ', pred, ' pred avg ', pred_avg)
-        cv2.waitKey(-1)
+        if write_video:
+            out.write(frame)
+        else:
+            cv2.imshow('frame ', frame)
+            cv2.waitKey(-1)
 
-        
 
 if __name__ == "__main__":
 
+    inp_dir = '/home/balajisundar/Documents/US/NEU/Full-time/Company/TuMeke/tumeke_takehome_final/'
     root_dir = './results/'
 
+    # inp_video_path = inp_dir + 'hard_data/folding/clip_2/video.mp4'
+    inp_video_path = inp_dir + 'simple_data/lifting_3/clip_2/video.mp4'
     video_path = root_dir + 'lifting_3_clip_2.mp4'
     lst_path = root_dir + 'lifting_3_clip_2.txt'
     out_csv_file = root_dir + 'lifting_3_clip_2.csv'
     conf_thresh = 0.5
-
-    run(video_path, lst_path, out_csv_file, conf_thresh)
+    write_video = 1
+    out_video_path = video_path[:-4] + 'f.mp4'
+    print('out_video_path ', out_video_path)
+    
+    run(inp_video_path, out_video_path, lst_path, out_csv_file, conf_thresh)
