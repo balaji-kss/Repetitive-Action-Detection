@@ -1,12 +1,6 @@
-# Introduction
+## Duration prediction for repetitive tasks in a video
 
-TuMeke's main goal as a company is to reduce injuries in manufacturing settings. The leading cause of bodily injury in manual work is hazardous postures repeated for a long period of time. Therefore, a very natural question to ask is: how often is a particular task repeated? Motions/tasks that are repeated frequently are likely to cause injury/discomfort. This task centers around estimating the frequency of repetition of a manual labor task given its video footage. Ultimately, you'll need to estimate how long each cycle of a job is, which gives rise to its frequency. For example, if we were to consider the short clip `sample.mp4` in the root folder of this directory, you'll notice that the gentlemen carries a box back and forth from the conveyor belt every 6 seconds or so. If we were to write down the times that each cycle takes, we might get an output like:
-
-6
-7
-6.5
-8
-....
+This repository predicts the time taken for each repetitive task for all the tasks in an entire video. First, we predict when a particular task ends.  
 
 We want to output a similar list of cycle length times for arbitrary videos. 
 
@@ -45,15 +39,3 @@ The input to your model should be the joint data/video data (whatever combo you'
 - `pose_dataset.py` contains some sample code demonstrating how to load in data as a pytorch `Dataset`. Note that the current method of loading frames from the video in `pose_dataset.py` is fairly ineffecient and should be modified somehow (perhaps by breaking up the video into frames beforehand) if you want to use video data for your model.
 - `main.py` demonstrates a simple example loading the dataset with a pytorch `DatasetLoader`. 
 - `requirements.txt` contains a small list of python deps for `pose_dataset.py` and `main.py`.
-
-# Getting Started
-
-To get started, we recommend taking a look at the input video footage. Use the grouth truth times to get a sense for what the cycles visually look like. Remember that any sort of technique (signal processing, neural networks, classical ML) is fair game for a solution. 
-
-# Deliverables
-
-Alongside your code, please include a short writeup explaining your approach -- some type of visuals (charts/diagrams) are always helpful to communicate your solution/results. Feel free to reach out to me (diwakar@tumeke.io) if you have any questions about the project!
-
-# Logging into AWS
-
-You have access to a T4 GPU on AWS in case you'd like to use accelerated computing for this project. In an email you should have received a `*.pem` file that contains your credentials to access the machine, and the url of the machine. Place the `*.pem` file in your `~/.ssh/` directory, and then you can sign in with: `ssh -i ~/.ssh/<PEM_FILENAME> ubuntu@<AWS_URL`. The machine already should have most common ML dependencies installed (NVIDIA drivers, pytorch, cuda, etc). Use `conda info --envs` to see a list of all the conda environments on the remote machine. The `pytorch_latest_p37` environment has all pytorch deps loaded with python 3.7. 
