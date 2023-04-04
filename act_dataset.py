@@ -101,7 +101,83 @@ def reshape_joints(joints_lst):
     if len(joints_lst) == 3:
         jtrl = [jt.reshape(30) for jt in joints_lst]
         return np.array(jtrl)
-        
+
+def get_joint_box(joints, pad = [0.7, 0.3]):
+
+    joints_np = np.array(joints)
+    joints_xs = joints_np[:, 0]
+    joints_ys = joints_np[:, 1]
+
+    joints_xs = joints_xs[joints_xs != -1]
+    joints_ys = joints_ys[joints_ys != -1]
+
+    sx, ex = np.min(joints_xs), np.max(joints_xs)
+    sy, ey = np.min(joints_ys), np.max(joints_ys)
+
+    w, h = ex - sx, ey - sy
+    cx, cy = 0.5 * (sx + ex), 0.5 * (sy + ey)
+
+    sx_, ex_ = cx - 0.5 * (1 + pad[0]) * w, cx + 0.5 * (1 + pad[0]) * w
+    sy_, ey_ = cy - 0.5 * (1 + pad[1]) * h, cy + 0.5 * (1 + pad[1]) * h
+
+    return [int(sx_), int(sy_), int(ex_), int(ey_)]
+
+def get_patch_size(img_shape, sz_ratio = [0.2, 0.3], asp_ratio = [1, 3]):
+
+    sz = np.max(img_shape)
+    sz = random.uniform(sz_ratio[0], sz_ratio[1]) * sz
+    asp = random.uniform(asp_ratio[0], asp_ratio[1])
+
+    if random.uniform(0.0, 1.0 ) < 0.5:
+        asp = 1./asp
+    
+    return sz * np.sqrt(asp), sz / np.sqrt(asp)
+
+def bb_iou(boxA, boxB):
+	
+	xA = max(boxA[0], boxB[0])
+	yA = max(boxA[1], boxB[1])
+	xB = min(boxA[2], boxB[2])
+	yB = min(boxA[3], boxB[3])
+	
+	interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+	
+	boxAArea = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1)
+	boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
+	
+	iou = interArea / float(boxAArea + boxBArea - interArea)
+	
+	return iou
+
+def add_neg_patch(org_img, joints, num_try = 20, iou_thresh = 0.1, debug=0):
+
+    img = org_img.copy()
+    joints_bbox = get_joint_box(joints)
+    sx, sy, ex, ey = joints_bbox
+    h, w = img.shape[:2]
+
+    if debug:
+        cv2.rectangle(img, (sx, sy), (ex, ey), (255,0,0), 2)
+
+    for i in range(num_try):
+        px, py = random.randint(0, w//10) * 10, random.randint(0, 0.5 * h//10) * 10
+        pw, ph = get_patch_size([h, w])
+        psx, psy, pex, pey = px, py, px + pw, py + ph 
+        # print('psx, psy, pex, pey ', psx, psy, pw, ph)
+        iou = bb_iou([sx, sy, ex, ey], [psx, psy, pex, pey])
+        # print('iou ', iou)
+        if iou < iou_thresh:break
+
+    bc, gc, rc = random.randint(0, 25) * 10, random.randint(0, 25) * 10, random.randint(0, 25) * 10
+    psx, psy, pex, pey = int(psx), int(psy), int(pex), int(pey)
+    cv2.rectangle(img, (psx, psy), (pex, pey), (bc,gc,rc), -1)
+
+    if debug:
+        cv2.imshow('img ', img)
+        cv2.waitKey(-1)
+
+    return img
+
 class ActDataset(Dataset):
     """Class to load in pose data.
     Args:
@@ -129,6 +205,7 @@ class ActDataset(Dataset):
         self.pos_val = 3
         self.neg_ratio = 3
         self.fps = self.video.fps
+        self.aug_ratio = 0.2
         print('self.fps ', self.fps)
         print('self.num_ts ', self.num_ts)
         print('self.tstride ', self.tstride)
@@ -257,13 +334,18 @@ class ActDataset(Dataset):
                 tids[i] = min(max(0, tids[i]), self.num_frames - 1)
                 img_path = os.path.join(self.image_dir, str(tids[i]) + '.jpg')
                 img = cv2.imread(img_path)
+                joints = self.joints_2d[tids[i]]
+            
                 # print(tids[i], ' img shape ', img.shape)
+                if self.mode == "train" and random.uniform(0.0, 1.0) < self.aug_ratio:
+                    img = add_neg_patch(img, joints)
+
                 if stack_img is None:
                     stack_img = img
                 else:
                     stack_img = np.concatenate((img, stack_img), axis=2)
 
-                joints = self.joints_2d[tids[i]]
+                
                 temp_joints.append(joints)
             
             temp_joints.reverse()

@@ -67,7 +67,7 @@ def train(train_loader, val_loader):
 
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.SGD(params, lr=lr)
-    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[10, 20], gamma=0.1)
+    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[20, 40], gamma=0.1)
     # regloss = torch.nn.SmoothL1Loss() 
     regloss = torch.nn.MSELoss() 
 
@@ -144,15 +144,15 @@ if __name__ == '__main__':
     num_class = 1
     device = "cuda"
     lr = 1e-2
-    num_epoch = 30
+    num_epoch = 60
     num_ts = 3
     tstride = 3
     inp_channels = 3 * num_ts
 
-    # root_dir = "hard_data/kontoor/"
-    root_dir = "simple_data/lifting_2/"
+    root_dir = "hard_data/kontoor/"
+    # root_dir = "simple_data/lifting_2/"
     data_dir = root_dir + 'clip_1/'
-    model_dir = './models/' + root_dir + 'exp3_4/'
+    model_dir = './models/' + root_dir + 'exp3_51/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
@@ -163,6 +163,6 @@ if __name__ == '__main__':
 
     train_loader, val_loader = data_loader(data_dir, input_size)
     
-    vis_dataloader(train_loader)
+    # vis_dataloader(train_loader)
 
-    # train(train_loader, val_loader)
+    train(train_loader, val_loader)

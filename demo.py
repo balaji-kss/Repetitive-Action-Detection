@@ -134,7 +134,7 @@ def run(dataset, model_path, input_size, device):
     smooth_win = []
     for fid in range(len(dataset)):
 
-        # if fid < 3000: continue
+        # if fid < 1600: continue
 
         input_, disp_frame, joints = stack_data(dataset, fid)
 
@@ -167,11 +167,11 @@ def write_lst(lst_path, frame_confs):
 
 if __name__ == "__main__":
 
-    clip = "clip_3"
-    root_dir = "simple_data/lifting_1/"
-    # root_dir = "hard_data/kontoor/"
+    clip = "clip_2"
+    # root_dir = "simple_data/lifting_1/"
+    root_dir = "hard_data/kontoor/"
     inp_video_dir = root_dir + clip + "/"
-    exp = 'exp3_4'
+    exp = 'exp3_51'
     model_path = './models/' + root_dir + '/' + exp + '/60.pth'
     out_video_dir = inp_video_dir + exp + '/'
     act_name = root_dir.rsplit('/')[1] + '_'
