@@ -157,8 +157,7 @@ if __name__ == '__main__':
     inp_channels = 3 * num_ts
 
     # paths
-    root_dir = "hard_data/kontoor/"
-    # root_dir = "simple_data/lifting_2/"
+    root_dir = "data/"
     data_dir = root_dir + 'clip_1/'
     model_dir = './models/' + root_dir + 'exp/'
 

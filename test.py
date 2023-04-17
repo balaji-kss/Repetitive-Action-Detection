@@ -65,7 +65,7 @@ def load_gt(csv_path, fps):
 
 if __name__ == "__main__":
 
-    video_path = '/home/balajisundar/Documents/US/NEU/Full-time/Company/TuMeke/Tumeke/final/kontoor_clip_2.mp4'
-    csv_path = '/home/balajisundar/Documents/US/NEU/Full-time/Company/TuMeke/Tumeke/final/kontoor_clip_2.csv'
+    video_path = 'video.mp4'
+    csv_path = 'video.csv'
 
     visualize(video_path, csv_path)

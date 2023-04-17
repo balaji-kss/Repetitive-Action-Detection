@@ -1,5 +1,0 @@
-inp_video_dir   hard_data/folding/clip_2/
-out_video_path   hard_data/folding/clip_2/exp3_4/folding_clip_2.mp4
-save_lst_path   hard_data/folding/clip_2/exp3_4/folding_clip_2.txt
-model_path  ./models/hard_data/folding//exp3_4/60.pth
-vw, vh, vfps  360 640 16.0

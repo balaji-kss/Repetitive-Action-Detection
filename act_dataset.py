@@ -373,8 +373,8 @@ class TestDataset(Dataset):
 if __name__ == "__main__":
 	
     input_res = 224
-    # inp_dir = "simple_data/lifting_2/clip_1"
-    inp_dir = "hard_data/kontoor/clip_1"
+
+    inp_dir = "data/clip_1"
 
     dataset = ActDataset(inp_dir, input_res, mode="train", num_ts = 3, tstride = 3)
     visualize_dataset(dataset)

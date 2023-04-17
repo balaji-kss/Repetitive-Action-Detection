@@ -1,8 +1,4 @@
-from torch.utils.data import Dataset, DataLoader
 import cv2
-import matplotlib.pyplot as plt
-import math
-import numpy as np
 import os
 
 def display_skeleton(image, data):
@@ -77,8 +73,8 @@ def display_result(image, conf, sm_conf, frameid, thresh):
 
 if __name__ == "__main__":
 
-    video_path = '/home/balaji/Tumeke/hard_data/kontoor/clip_1/video.mp4'
-    save_dir = '/home/balaji/Tumeke/hard_data/kontoor/clip_1/images/'
+    video_path = 'video.mp4'
+    save_dir = 'images/'
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)

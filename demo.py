@@ -181,8 +181,7 @@ def write_lst(lst_path, frame_confs):
 if __name__ == "__main__":
 
     clip = "clip_2"
-    # root_dir = "simple_data/lifting_1/"
-    root_dir = "hard_data/kontoor/"
+    root_dir = "data/"
     inp_video_dir = root_dir + clip + "/"
     exp = 'exp3_51'
     model_path = './models/' + root_dir + '/' + exp + '/60.pth'
