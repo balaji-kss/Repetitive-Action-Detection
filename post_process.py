@@ -217,9 +217,9 @@ if __name__ == "__main__":
 
     # paths
     root_dir = './results/'
-    video_path = root_dir + 'kontoor_clip_2.mp4'
-    lst_path = root_dir + 'kontoor_clip_2.txt'
-    out_csv_file = root_dir + 'kontoor_clip_2.csv'
+    video_path = root_dir + 'clip_2.mp4'
+    lst_path = root_dir + 'clip_2.txt'
+    out_csv_file = root_dir + 'clip_2.csv'
     conf_thresh = 0.3
     write_video = 1
     delta = 10
